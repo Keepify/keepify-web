@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dropzone-container {
+  height: calc(100vh - 5rem);
+}
