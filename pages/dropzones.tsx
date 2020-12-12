@@ -2,14 +2,28 @@ import { GoogleMap, useLoadScript } from '@react-google-maps/api';
 import Link from 'next/link';
 import Input from 'components/Input';
 import { Search } from 'react-feather';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import googleMapsTheme from 'public/googleMapsTheme.json';
 
 export default function Dropzones() {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   });
   const { query } = useRouter();
+  const [map, setMap] = useState(null);
+
+  const onLoad = useCallback((map) => {
+    // @ts-ignore
+    const bounds = new window.google.maps.LatLngBounds();
+    map.fitBounds(bounds);
+    console.log({ map });
+    setMap(map);
+  }, []);
+
+  const onUnmount = useCallback(() => {
+    setMap(null);
+  }, []);
 
   useEffect(() => {
     if (!query.lat || !query.lng) {
@@ -18,8 +32,6 @@ export default function Dropzones() {
       });
     }
   }, []);
-
-  console.log({ loadError });
 
   return (
     <div className="w-full">
@@ -77,7 +89,14 @@ export default function Dropzones() {
                 height: '100%',
                 width: '100%',
               }}
-              onLoad={() => console.log('loaded')}
+              center={{ lat: Number(query.lat), lng: Number(query.lng) }}
+              zoom={14}
+              options={{
+                styles: googleMapsTheme,
+                disableDefaultUI: true,
+              }}
+              onLoad={onLoad}
+              onUnmount={onUnmount}
             ></GoogleMap>
           )}
         </div>
