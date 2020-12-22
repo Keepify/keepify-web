@@ -5,11 +5,7 @@ import { motion } from 'framer-motion';
 import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
 import { useEffect, useMemo, useState } from 'react';
-
-type LatLng = {
-  latitude: number;
-  longitude: number;
-};
+import { LatLng } from 'types';
 
 export default function Home() {
   const [position, setPosition] = useState<LatLng>(null);

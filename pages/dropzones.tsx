@@ -1,37 +1,60 @@
-import { GoogleMap, useLoadScript } from '@react-google-maps/api';
+import ReactMapGL, { ViewportProps, FlyToInterpolator } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import Link from 'next/link';
 import Input from 'components/Input';
 import { Search } from 'react-feather';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import googleMapsTheme from 'public/googleMapsTheme.json';
+import { LatLng } from 'types';
+import { getGeocode } from 'services/map';
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function Dropzones() {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-  });
   const { query } = useRouter();
-  const [map, setMap] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState<LatLng>({
+    latitude: query.lat ? Number(query.lat) : 0,
+    longitude: query.lng ? Number(query.lng) : 0,
+  });
+  const [viewPort, setViewPort] = useState<ViewportProps>({
+    latitude: 40.738841,
+    longitude: -74.0272836,
+    zoom: 12,
+  } as ViewportProps);
+  const debouncedSearch = useDebouncedCallback(searchDropzone, 500);
 
-  const onLoad = useCallback((map) => {
-    // @ts-ignore
-    const bounds = new window.google.maps.LatLngBounds();
-    map.fitBounds(bounds);
-    console.log({ map });
-    setMap(map);
-  }, []);
-
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
-
+  // Request current location through navigator
   useEffect(() => {
     if (!query.lat || !query.lng) {
       navigator.geolocation.getCurrentPosition((position) => {
-        console.log({ position });
+        setCurrentLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       });
     }
   }, []);
+
+  useEffect(() => {
+    setViewPort((prev) => ({
+      ...prev,
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
+    }));
+  }, [currentLocation]);
+
+  async function searchDropzone(query: string) {
+    const list = await getGeocode(query);
+
+    if (list?.features?.length) {
+      // move to the center of the first result
+      setViewPort((prev) => ({
+        ...prev,
+        zoom: 14,
+        latitude: list.features[0].center[1],
+        longitude: list.features[0].center[0],
+      }));
+    }
+  }
 
   return (
     <div className="w-full">
@@ -68,6 +91,9 @@ export default function Dropzones() {
                   <Search size={16} color="#7E7E7E" />
                 </span>
               }
+              onChange={(e) => {
+                debouncedSearch.callback(e.target.value);
+              }}
             />
           </div>
           <h2 className="text-black font-bold text-2xl pb-4">Nearby Storages</h2>
@@ -83,22 +109,17 @@ export default function Dropzones() {
           </div>
         </div>
         <div className="w-2/5 mr-auto">
-          {isLoaded && (
-            <GoogleMap
-              mapContainerStyle={{
-                height: '100%',
-                width: '100%',
-              }}
-              center={{ lat: Number(query.lat), lng: Number(query.lng) }}
-              zoom={14}
-              options={{
-                styles: googleMapsTheme,
-                disableDefaultUI: true,
-              }}
-              onLoad={onLoad}
-              onUnmount={onUnmount}
-            ></GoogleMap>
-          )}
+          <ReactMapGL
+            width="100%"
+            height="100%"
+            latitude={viewPort.latitude}
+            longitude={viewPort.longitude}
+            zoom={viewPort.zoom}
+            onViewportChange={(viewport) => setViewPort(viewport)}
+            mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
+            mapStyle="mapbox://styles/mapbox/streets-v11"
+            transitionInterpolator={new FlyToInterpolator()}
+          />
         </div>
       </div>
     </div>

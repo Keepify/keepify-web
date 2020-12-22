@@ -1,4 +1,6 @@
-interface Props extends React.HTMLAttributes<HTMLInputElement> {
+import { InputHTMLAttributes } from 'react';
+
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
   prefixElement?: JSX.Element;
   suffixElement?: JSX.Element;
 }
@@ -11,6 +13,7 @@ const Input: React.FC<Props> = ({ className, prefixElement, ...props }) => {
       )}
 
       <input
+        type="text"
         className={`bg-light-purple placeholder-light-grey rounded-xl pl-${
           prefixElement ? 9 : 4
         } pr-4 py-2 focus:outline-none`}
