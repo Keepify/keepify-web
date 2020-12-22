@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { LatLng } from 'types';
 import { getGeocode } from 'services/map';
 import { useDebouncedCallback } from 'use-debounce';
+import Skeleton from 'react-loading-skeleton';
 
 export default function Dropzones() {
   const { query } = useRouter();
@@ -43,16 +44,18 @@ export default function Dropzones() {
   }, [currentLocation]);
 
   async function searchDropzone(query: string) {
-    const list = await getGeocode(query);
+    if (query.trim().length) {
+      const list = await getGeocode(query);
 
-    if (list?.features?.length) {
-      // move to the center of the first result
-      setViewPort((prev) => ({
-        ...prev,
-        zoom: 14,
-        latitude: list.features[0].center[1],
-        longitude: list.features[0].center[0],
-      }));
+      if (list?.features?.length) {
+        // move to the center of the first result
+        setViewPort((prev) => ({
+          ...prev,
+          zoom: 14,
+          latitude: list.features[0].center[1],
+          longitude: list.features[0].center[0],
+        }));
+      }
     }
   }
 
@@ -99,6 +102,9 @@ export default function Dropzones() {
           <h2 className="text-black font-bold text-2xl pb-4">Nearby Storages</h2>
           <div className="container mx-auto">
             <div className="flex flex-wrap -mx-1 lg:-mx-4">
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
               <Dummy />
               <Dummy />
               <Dummy />
@@ -125,6 +131,29 @@ export default function Dropzones() {
     </div>
   );
 }
+
+const SkeletonCard = () => (
+  <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
+    <article className="overflow-hidden rounded-lg shadow-lg">
+      <a href="#">
+        <Skeleton height={150} width="100%" />
+      </a>
+      <header className="flex items-center justify-between leading-tight p-2 md:p-4">
+        <h1 className="w-full">
+          <Skeleton height={30} />
+        </h1>
+      </header>
+      <footer className="flex items-center justify-between leading-none p-2 md:p-4">
+        <a className="flex items-center no-underline hover:underline text-black" href="#">
+          <Skeleton circle={true} height={32} width={32} />
+          <p className="ml-2">
+            <Skeleton height={25} width={125} />
+          </p>
+        </a>
+      </footer>
+    </article>
+  </div>
+);
 
 const Dummy = () => (
   <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
