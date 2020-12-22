@@ -1,4 +1,4 @@
-import ReactMapGL, { ViewportProps, FlyToInterpolator } from 'react-map-gl';
+import ReactMapGL, { ViewportProps, FlyToInterpolator, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Link from 'next/link';
 import Input from 'components/Input';
@@ -8,7 +8,78 @@ import { useRouter } from 'next/router';
 import { LatLng } from 'types';
 import { getGeocode } from 'services/map';
 import { useDebouncedCallback } from 'use-debounce';
-import Skeleton from 'react-loading-skeleton';
+import Image from 'next/image';
+import { DropzoneListItem } from 'types/dropzone';
+import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
+
+const getMockData = (): Promise<DropzoneListItem[]> => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res([
+        {
+          id: 'd1',
+          location: {
+            latitude: 39.8870344,
+            longitude: 32.8455316,
+          },
+          photo_urls: ['https://picsum.photos/600/400/?random'],
+          host: {
+            id: 'h1',
+            first_name: 'Vida',
+            last_name: 'André',
+            photo: 'https://picsum.photos/32/32/?random',
+          },
+          location_name: 'Sheraton Hotel',
+          cost: {
+            rate: 1.5,
+            currency: '$',
+            unit: 'day',
+          },
+        },
+        {
+          id: 'd2',
+          location: {
+            latitude: 39.8869334,
+            longitude: 32.843962,
+          },
+          photo_urls: ['https://picsum.photos/600/400/?random'],
+          host: {
+            id: 'h2',
+            first_name: 'Valerianus',
+            last_name: 'Haji',
+            photo: 'https://picsum.photos/32/32/?random',
+          },
+          location_name: 'Ankara Hotel',
+          cost: {
+            rate: 2,
+            currency: '$',
+            unit: 'day',
+          },
+        },
+        {
+          id: 'd3',
+          location: {
+            latitude: 39.8842759,
+            longitude: 32.843486,
+          },
+          photo_urls: ['https://picsum.photos/600/400/?random'],
+          host: {
+            id: 'h3',
+            first_name: 'Lennox',
+            last_name: 'Síomha',
+            photo: 'https://picsum.photos/32/32/?random',
+          },
+          location_name: 'Park',
+          cost: {
+            rate: 2.25,
+            currency: '$',
+            unit: 'day',
+          },
+        },
+      ]);
+    }, 1000);
+  });
+};
 
 export default function Dropzones() {
   const { query } = useRouter();
@@ -21,6 +92,8 @@ export default function Dropzones() {
     longitude: -74.0272836,
     zoom: 12,
   } as ViewportProps);
+  const [isLoading, setIsLoading] = useState(false);
+  const [dropzoneList, setDropzoneList] = useState<DropzoneListItem[]>([]);
   const debouncedSearch = useDebouncedCallback(searchDropzone, 500);
 
   // Request current location through navigator
@@ -36,11 +109,18 @@ export default function Dropzones() {
   }, []);
 
   useEffect(() => {
-    setViewPort((prev) => ({
-      ...prev,
-      latitude: currentLocation.latitude,
-      longitude: currentLocation.longitude,
-    }));
+    (async () => {
+      setIsLoading(true);
+      const data = await getMockData();
+      setDropzoneList(data);
+      setViewPort((prev) => ({
+        ...prev,
+        ...data[0].location,
+        transitionDuration: 300,
+        transitionInterpolator: new FlyToInterpolator(),
+      }));
+      setIsLoading(false);
+    })();
   }, [currentLocation]);
 
   async function searchDropzone(query: string) {
@@ -54,6 +134,8 @@ export default function Dropzones() {
           zoom: 14,
           latitude: list.features[0].center[1],
           longitude: list.features[0].center[0],
+          transitionDuration: 300,
+          transitionInterpolator: new FlyToInterpolator(),
         }));
       }
     }
@@ -102,87 +184,54 @@ export default function Dropzones() {
           <h2 className="text-black font-bold text-2xl pb-4">Nearby Storages</h2>
           <div className="container mx-auto">
             <div className="flex flex-wrap -mx-1 lg:-mx-4">
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <Dummy />
-              <Dummy />
-              <Dummy />
-              <Dummy />
-              <Dummy />
-              <Dummy />
+              {isLoading ? (
+                <>
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                </>
+              ) : (
+                dropzoneList.map((dropzone, i) => (
+                  <DropzoneCard
+                    key={i}
+                    {...dropzone}
+                    onHover={() => {
+                      setViewPort((prev) => ({
+                        ...prev,
+                        latitude: dropzone.location.latitude,
+                        longitude: dropzone.location.longitude,
+                        transitionDuration: 300,
+                        transitionInterpolator: new FlyToInterpolator(),
+                      }));
+                    }}
+                    currentLocation={query.lat && query.lng ? currentLocation : null}
+                  />
+                ))
+              )}
             </div>
           </div>
         </div>
         <div className="w-2/5 mr-auto">
           <ReactMapGL
+            {...viewPort}
             width="100%"
             height="100%"
-            latitude={viewPort.latitude}
-            longitude={viewPort.longitude}
-            zoom={viewPort.zoom}
             onViewportChange={(viewport) => setViewPort(viewport)}
             mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
             mapStyle="mapbox://styles/mapbox/streets-v11"
-            transitionInterpolator={new FlyToInterpolator()}
-          />
+          >
+            {dropzoneList.map((dropzone, i) => (
+              <Marker
+                key={i}
+                latitude={dropzone.location.latitude}
+                longitude={dropzone.location.longitude}
+              >
+                <Image src="/dropzone/marker.svg" width={55} height={80} />
+              </Marker>
+            ))}
+          </ReactMapGL>
         </div>
       </div>
     </div>
   );
 }
-
-const SkeletonCard = () => (
-  <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
-    <article className="overflow-hidden rounded-lg shadow-lg">
-      <a href="#">
-        <Skeleton height={150} width="100%" />
-      </a>
-      <header className="flex items-center justify-between leading-tight p-2 md:p-4">
-        <h1 className="w-full">
-          <Skeleton height={30} />
-        </h1>
-      </header>
-      <footer className="flex items-center justify-between leading-none p-2 md:p-4">
-        <a className="flex items-center no-underline hover:underline text-black" href="#">
-          <Skeleton circle={true} height={32} width={32} />
-          <p className="ml-2">
-            <Skeleton height={25} width={125} />
-          </p>
-        </a>
-      </footer>
-    </article>
-  </div>
-);
-
-const Dummy = () => (
-  <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
-    <article className="overflow-hidden rounded-lg shadow-lg">
-      <a href="#">
-        <img
-          alt="Placeholder"
-          className="block h-auto w-full"
-          src="https://picsum.photos/600/400/?random"
-        />
-      </a>
-      <header className="flex items-center justify-between leading-tight p-2 md:p-4">
-        <h1 className="text-lg">
-          <a className="no-underline hover:underline text-black" href="#">
-            Article Title
-          </a>
-        </h1>
-        <p className="text-grey-darker text-sm">14/4/19</p>
-      </header>
-      <footer className="flex items-center justify-between leading-none p-2 md:p-4">
-        <a className="flex items-center no-underline hover:underline text-black" href="#">
-          <img
-            alt="Placeholder"
-            className="block rounded-full"
-            src="https://picsum.photos/32/32/?random"
-          />
-          <p className="ml-2 text-sm">Author Name</p>
-        </a>
-      </footer>
-    </article>
-  </div>
-);
