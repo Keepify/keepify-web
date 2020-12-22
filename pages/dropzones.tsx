@@ -22,12 +22,14 @@ const getMockData = (): Promise<DropzoneListItem[]> => {
             latitude: 39.8870344,
             longitude: 32.8455316,
           },
-          photo_urls: ['https://picsum.photos/600/400/?random'],
+          photo_urls: [
+            `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/600/400/`,
+          ],
           host: {
             id: 'h1',
             first_name: 'Vida',
             last_name: 'André',
-            photo: 'https://picsum.photos/32/32/?random',
+            photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
           },
           location_name: 'Sheraton Hotel',
           cost: {
@@ -42,12 +44,14 @@ const getMockData = (): Promise<DropzoneListItem[]> => {
             latitude: 39.8869334,
             longitude: 32.843962,
           },
-          photo_urls: ['https://picsum.photos/600/400/?random'],
+          photo_urls: [
+            `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/600/400/`,
+          ],
           host: {
             id: 'h2',
             first_name: 'Valerianus',
             last_name: 'Haji',
-            photo: 'https://picsum.photos/32/32/?random',
+            photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
           },
           location_name: 'Ankara Hotel',
           cost: {
@@ -62,12 +66,14 @@ const getMockData = (): Promise<DropzoneListItem[]> => {
             latitude: 39.8842759,
             longitude: 32.843486,
           },
-          photo_urls: ['https://picsum.photos/600/400/?random'],
+          photo_urls: [
+            `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/600/400/`,
+          ],
           host: {
             id: 'h3',
             first_name: 'Lennox',
             last_name: 'Síomha',
-            photo: 'https://picsum.photos/32/32/?random',
+            photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
           },
           location_name: 'Park',
           cost: {
@@ -112,6 +118,7 @@ export default function Dropzones() {
     (async () => {
       setIsLoading(true);
       const data = await getMockData();
+      console.log({ data });
       setDropzoneList(data);
       setViewPort((prev) => ({
         ...prev,
@@ -168,8 +175,10 @@ export default function Dropzones() {
       </nav>
       <div className="flex dropzone-container">
         <div className="w-3/5 overflow-y-auto bg-full-white py-12 px-7">
-          <div className="pb-12">
+          <div className="pb-12 w-72">
             <Input
+              containerClassName="bg-light-purple rounded-xl"
+              className="bg-light-purple"
               placeholder="Search any location"
               prefixElement={
                 <span>
