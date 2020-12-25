@@ -203,8 +203,8 @@ export default function Dropzones() {
               ) : (
                 dropzoneList.map((dropzone, i) => (
                   <DropzoneCard
-                    key={i}
                     {...dropzone}
+                    key={i}
                     onHover={() => {
                       setViewPort((prev) => ({
                         ...prev,

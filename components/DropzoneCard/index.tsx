@@ -3,6 +3,7 @@ import { memo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { LatLng } from 'types';
 import { DropzoneListItem } from 'types/dropzone';
+import Link from 'next/link';
 
 type Props = DropzoneListItem & {
   onHover: () => void;
@@ -11,34 +12,34 @@ type Props = DropzoneListItem & {
 
 const DropzoneCard = (props: Props) => (
   <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3" onMouseEnter={props.onHover}>
-    <article className="overflow-hidden rounded-lg shadow-lg">
-      <a href="#">
-        <img alt="Placeholder" className="block h-auto w-full" src={props.photo_urls[0]} />
+    <Link href={`/dropzone/${props.id}`}>
+      <a>
+        <article className="overflow-hidden rounded-lg shadow-lg">
+          <img alt="Placeholder" className="block h-auto w-full" src={props.photo_urls[0]} />
+          <header className="flex items-center justify-between leading-tight p-2 md:p-4">
+            <h1 className="text-lg">
+              <span className="no-underline text-black">{props.location_name}</span>
+            </h1>
+            <p className="text-grey-darker text-sm text-right">
+              {props.cost.currency}
+              {props.cost.rate}/{props.cost.unit}
+            </p>
+          </header>
+          <footer className="flex items-center justify-between leading-none p-2 md:p-4">
+            <span className="flex items-center no-underline text-black">
+              <img alt="Placeholder" className="block rounded-full" src={props.host.photo} />
+              <p className="ml-2 text-sm">
+                {props.host.first_name} {props.host.last_name}
+              </p>
+            </span>
+            <p className="text-grey-darker text-sm text-right">
+              {props.currentLocation &&
+                formatDistance(calculateDistance(props.currentLocation, props.location))}
+            </p>
+          </footer>
+        </article>
       </a>
-      <header className="flex items-center justify-between leading-tight p-2 md:p-4">
-        <h1 className="text-lg">
-          <a className="no-underline hover:underline text-black" href="#">
-            {props.location_name}
-          </a>
-        </h1>
-        <p className="text-grey-darker text-sm text-right">
-          {props.cost.currency}
-          {props.cost.rate}/{props.cost.unit}
-        </p>
-      </header>
-      <footer className="flex items-center justify-between leading-none p-2 md:p-4">
-        <a className="flex items-center no-underline hover:underline text-black" href="#">
-          <img alt="Placeholder" className="block rounded-full" src={props.host.photo} />
-          <p className="ml-2 text-sm">
-            {props.host.first_name} {props.host.last_name}
-          </p>
-        </a>
-        <p className="text-grey-darker text-sm text-right">
-          {props.currentLocation &&
-            formatDistance(calculateDistance(props.currentLocation, props.location))}
-        </p>
-      </footer>
-    </article>
+    </Link>
   </div>
 );
 
