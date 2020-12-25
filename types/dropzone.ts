@@ -16,4 +16,5 @@ export type DropzoneListItem = {
     currency: string;
     unit: string;
   };
+  rating: number;
 };

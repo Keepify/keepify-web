@@ -5,8 +5,12 @@ import { getLocationByCode } from 'services/map';
 import ReactMapGL, { ViewportProps, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Pin from 'public/dropzone/pin';
-import { useState } from 'react';
-import { Archive, Briefcase } from 'react-feather';
+import { useRef, useState } from 'react';
+import { Archive, Briefcase, Star, Plus, Minus } from 'react-feather';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import 'react-day-picker/lib/style.css';
+import Button from 'components/Button';
+import { motion } from 'framer-motion';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   const [viewPort, setViewPort] = useState<ViewportProps>({
@@ -14,6 +18,24 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
     longitude: details.location.longitude,
     zoom: 12,
   } as ViewportProps);
+  const [from, setFrom] = useState(null);
+  const [to, setTo] = useState(null);
+  const [itemsNum, setItemsNum] = useState(1);
+  const toRef = useRef(null);
+
+  console.log({ current: toRef.current });
+
+  function decreaseNum() {
+    if (itemsNum > 1) {
+      setItemsNum((prev) => prev - 1);
+    }
+  }
+
+  function increaseNum() {
+    if (itemsNum < 10) {
+      setItemsNum((prev) => prev + 1);
+    }
+  }
 
   return (
     <div>
@@ -44,14 +66,14 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         <img src={details.photo_urls[0]} alt="thumbnail" className="w-full object-cover h-72" />
       </div>
 
-      <div className="max-w-screen-lg my-0 mx-auto pt-20">
-        <div className="w-4/6">
+      <div className="max-w-screen-lg my-0 mx-auto pt-20 flex">
+        <div className="w-4/6 mr-12">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">{details.location_name}</h1>
-            <span className="text-xl font-bold">
-              {details.cost.currency}
-              {details.cost.rate}/{details.cost.unit}
-            </span>
+            <div className="text-xl font-bold flex">
+              <Star fontSize={12} color="#FF8E6E" />
+              <span className="ml-2">{details.rating}</span>
+            </div>
           </div>
           <h3 className="text-md text-grey pt-2">{location}</h3>
           <hr className="w-full h-0.5 mt-8 bg-white opacity-20 pb-10" />
@@ -65,7 +87,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
                 </div>
                 <h3 className="font-bold text-lg pb-2">In-person Deposit</h3>
                 <p className="text-sm">
-                  You may bring the item(s) to be kept in-person during work-hours.
+                  You may bring the item(s) to be kept personally during work-hours.
                 </p>
               </div>
             </div>
@@ -82,7 +104,77 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </div>
           </div>
         </div>
-        <div className="w-2/6"></div>
+        <div className="w-2/6">
+          <div className="shadow-2xl rounded-lg p-8">
+            <p className="text-xl font-bold">
+              {details.cost.currency}
+              {details.cost.rate}/{details.cost.unit}
+            </p>
+            <p className="pt-6 pb-2 font-bold">Dates</p>
+            <div className="flex">
+              <div className="w-1/2">
+                <DayPickerInput
+                  value={from}
+                  placeholder="Drop-off"
+                  format="LL"
+                  dayPickerProps={{
+                    selectedDays: [from, { from, to }],
+                    disabledDays: { after: to },
+                    toMonth: to,
+                    modifiers: { start: from, end: to },
+                    numberOfMonths: 2,
+                    onDayClick: () => toRef.current.getInput().focus(),
+                  }}
+                  onDayChange={(date) => setFrom(date)}
+                />
+              </div>
+              <div className="w-1/2">
+                <DayPickerInput
+                  ref={toRef}
+                  value={to}
+                  placeholder="Pickup"
+                  format="LL"
+                  dayPickerProps={{
+                    selectedDays: [from, { from, to }],
+                    disabledDays: { before: from },
+                    modifiers: { start: from, end: to },
+                    month: from,
+                    fromMonth: from,
+                    numberOfMonths: 2,
+                  }}
+                  onDayChange={(date) => setTo(date)}
+                />
+              </div>
+            </div>
+
+            <p className="pt-4 pb-2 font-bold">Number of Items</p>
+            <div className="flex justify-between items-center">
+              <span className="text-xl font-bold">{itemsNum}</span>
+              <div className="flex">
+                <motion.span
+                  whileHover={{ rotate: 180 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-center items-center w-6 h-6 mr-1 shadow-2xl rounded-xl cursor-pointer"
+                  onClick={decreaseNum}
+                >
+                  <Minus size={16} />
+                </motion.span>
+                <motion.span
+                  whileHover={{ rotate: 180 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-center items-center w-6 h-6 shadow-2xl rounded-xl cursor-pointer"
+                  onClick={increaseNum}
+                >
+                  <Plus size={16} />
+                </motion.span>
+              </div>
+            </div>
+
+            <div className="pt-8">
+              <Button className="w-full">Book Now</Button>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="max-w-screen-lg my-0 mx-auto pt-10">
         <h2 className="text-2xl">Location</h2>
@@ -135,6 +227,7 @@ DropzoneDetails.getInitialProps = async (ctx: NextPageContext) => {
       currency: '$',
       unit: 'day',
     },
+    rating: 5,
   };
 
   const location = await getLocationByCode(dummy.location);

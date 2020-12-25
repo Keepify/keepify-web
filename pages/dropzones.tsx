@@ -38,6 +38,7 @@ const getMockData = (): Promise<DropzoneListItem[]> => {
             currency: '$',
             unit: 'day',
           },
+          rating: 4.8,
         },
         {
           id: 'd2',
@@ -60,6 +61,7 @@ const getMockData = (): Promise<DropzoneListItem[]> => {
             currency: '$',
             unit: 'day',
           },
+          rating: 5,
         },
         {
           id: 'd3',
@@ -82,6 +84,7 @@ const getMockData = (): Promise<DropzoneListItem[]> => {
             currency: '$',
             unit: 'day',
           },
+          rating: 4.2,
         },
       ]);
     }, 1000);
