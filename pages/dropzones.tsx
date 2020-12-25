@@ -11,6 +11,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import Image from 'next/image';
 import { DropzoneListItem } from 'types/dropzone';
 import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
+import Pin from 'public/dropzone/pin';
 
 const getMockData = (): Promise<DropzoneListItem[]> => {
   return new Promise((res) => {
@@ -234,8 +235,10 @@ export default function Dropzones() {
                 key={i}
                 latitude={dropzone.location.latitude}
                 longitude={dropzone.location.longitude}
+                offsetTop={-48}
+                offsetLeft={-24}
               >
-                <Image src="/dropzone/marker.svg" width={55} height={80} />
+                <Pin />
               </Marker>
             ))}
           </ReactMapGL>

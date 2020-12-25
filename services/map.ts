@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { LatLng } from 'types';
 
 type GeocodeFeature = {
   bbox: number[];
@@ -29,6 +30,27 @@ export async function getGeocode(query: string) {
     );
 
     return data;
+  } catch (e) {
+    throw e;
+  }
+}
+
+type GeoLocationPayload = {
+  plus_code: {
+    compound_code: string;
+    global_code: string;
+  };
+};
+
+export async function getLocationByCode({ latitude, longitude }: LatLng) {
+  try {
+    const { data } = await axios.get<GeoLocationPayload>(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+    );
+
+    const [, ...result] = data.plus_code.compound_code.split(' ');
+
+    return result;
   } catch (e) {
     throw e;
   }
