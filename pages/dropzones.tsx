@@ -17,7 +17,7 @@ import { useUserInfo } from 'hooks/redux';
 
 export default function Dropzones() {
   const { query } = useRouter();
-  const user = useUserInfo();
+  const { isLogin } = useUserInfo();
   const [currentLocation, setCurrentLocation] = useState<LatLng>({
     latitude: query.lat ? Number(query.lat) : 0,
     longitude: query.lng ? Number(query.lng) : 0,
@@ -108,9 +108,9 @@ export default function Dropzones() {
               </Link>
             </li>
             <li>
-              <Link href={user ? '/profile' : '/login'}>
+              <Link href={isLogin ? '/profile' : '/login'}>
                 <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
-                  {user ? 'Profile' : 'Login'}
+                  {isLogin ? 'Profile' : 'Login'}
                 </a>
               </Link>
             </li>

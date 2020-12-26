@@ -3,7 +3,8 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction } from 'redux';
 
 const initialState = {
-  user: null,
+  userInfo: null,
+  isLogin: false,
 };
 
 export default function userReducer(state = initialState, action: AnyAction) {
@@ -11,7 +12,7 @@ export default function userReducer(state = initialState, action: AnyAction) {
     case HYDRATE:
       return { ...state, ...action.payload.user };
     case SET_USER_INFO:
-      return { ...state, user: action.payload };
+      return { ...state, userInfo: action.payload, isLogin: true };
     case LOGOUT_USER:
       return initialState;
     default:

@@ -23,10 +23,10 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
 function MyApp({ Component, pageProps }) {
-  const user = useUserInfo();
+  const { isLogin } = useUserInfo();
 
   useEffect(() => {
-    if (user) {
+    if (isLogin) {
       // bind token to axios header
       const token = cookie.get('_ap.ut');
       setAuthToken(token);

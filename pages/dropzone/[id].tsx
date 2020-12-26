@@ -15,7 +15,7 @@ import { getDropzone } from 'services/dropzone';
 import { useUserInfo } from 'hooks/redux';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
-  const user = useUserInfo();
+  const { isLogin } = useUserInfo();
   const [viewPort, setViewPort] = useState<ViewportProps>({
     latitude: details.location.lat,
     longitude: details.location.lng,
@@ -54,9 +54,9 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
               </Link>
             </li>
             <li>
-              <Link href={user ? '/profile' : '/login'}>
+              <Link href={isLogin ? '/profile' : '/login'}>
                 <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
-                  {user ? 'Profile' : 'Login'}
+                  {isLogin ? 'Profile' : 'Login'}
                 </a>
               </Link>
             </li>

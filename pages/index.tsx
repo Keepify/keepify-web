@@ -10,7 +10,7 @@ import { useUserInfo } from 'hooks/redux';
 
 export default function Home() {
   const [position, setPosition] = useState<LatLng>(null);
-  const user = useUserInfo();
+  const { isLogin } = useUserInfo();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -41,9 +41,9 @@ export default function Home() {
               </Link>
             </li>
             <li>
-              <Link href={user ? '/profile' : '/login'}>
+              <Link href={isLogin ? '/profile' : '/login'}>
                 <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
-                  {user ? 'Profile' : 'Login'}
+                  {isLogin ? 'Profile' : 'Login'}
                 </a>
               </Link>
             </li>

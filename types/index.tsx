@@ -9,7 +9,10 @@ export interface PageContext extends NextPageContext {
 export type Actions = { type: 'SET_USER_INFO'; payload: User } | { type: 'LOGOUT_USER' };
 
 export interface RootState {
-  user: User;
+  user: {
+    userInfo: User;
+    isLogin: boolean;
+  };
 }
 
 export type LatLng = {
