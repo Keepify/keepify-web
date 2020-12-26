@@ -9,7 +9,6 @@ import { LatLng } from 'types';
 import { getGeocode } from 'services/map';
 import { getDropzones } from 'services/dropzone';
 import { useDebouncedCallback } from 'use-debounce';
-import Image from 'next/image';
 import { DropzoneListItem } from 'types/dropzone';
 import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
 import Pin from 'public/dropzone/pin';
@@ -66,11 +65,9 @@ export default function Dropzones() {
   }, [currentLocation]);
 
   async function fetchDropzones() {
-    setIsLoading(true);
     const data = await getDropzones({ latitude: viewPort.latitude, longitude: viewPort.longitude });
 
     setDropzoneList(data);
-    setIsLoading(false);
   }
 
   async function searchDropzone(query: string) {
@@ -78,6 +75,7 @@ export default function Dropzones() {
       const list = await getGeocode(query);
 
       if (list?.features?.length) {
+        setIsLoading(true);
         await fetchDropzones();
         // move to the center of the first result
         setViewPort((prev) => ({
@@ -88,6 +86,8 @@ export default function Dropzones() {
           transitionDuration: 300,
           transitionInterpolator: new FlyToInterpolator(),
         }));
+
+        setIsLoading(false);
       }
     }
   }
