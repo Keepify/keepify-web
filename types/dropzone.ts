@@ -1,20 +1,17 @@
-import { LatLng } from 'types';
+import { User } from './user';
 
 export type DropzoneListItem = {
   id: string;
-  location: LatLng;
-  photo_urls: string[];
-  host: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    photo: string;
+  name: string;
+  host: User;
+  thumbnail: string;
+  location: {
+    lat: number;
+    lng: number;
   };
-  location_name: string;
-  cost: {
-    rate: number;
-    currency: string;
-    unit: string;
-  };
+  rate: number;
+  unit: string;
   rating: number;
+  type: string;
+  services: string[];
 };

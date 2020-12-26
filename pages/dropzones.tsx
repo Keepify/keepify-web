@@ -13,84 +13,6 @@ import { DropzoneListItem } from 'types/dropzone';
 import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
 import Pin from 'public/dropzone/pin';
 
-const getMockData = (): Promise<DropzoneListItem[]> => {
-  return new Promise((res) => {
-    setTimeout(() => {
-      res([
-        {
-          id: 'd1',
-          location: {
-            latitude: 39.8870344,
-            longitude: 32.8455316,
-          },
-          photo_urls: [
-            `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/600/400/`,
-          ],
-          host: {
-            id: 'h1',
-            first_name: 'Vida',
-            last_name: 'André',
-            photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
-          },
-          location_name: 'Sheraton Hotel',
-          cost: {
-            rate: 1.5,
-            currency: '$',
-            unit: 'day',
-          },
-          rating: 4.8,
-        },
-        {
-          id: 'd2',
-          location: {
-            latitude: 39.8869334,
-            longitude: 32.843962,
-          },
-          photo_urls: [
-            `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/600/400/`,
-          ],
-          host: {
-            id: 'h2',
-            first_name: 'Valerianus',
-            last_name: 'Haji',
-            photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
-          },
-          location_name: 'Ankara Hotel',
-          cost: {
-            rate: 2,
-            currency: '$',
-            unit: 'day',
-          },
-          rating: 5,
-        },
-        {
-          id: 'd3',
-          location: {
-            latitude: 39.8842759,
-            longitude: 32.843486,
-          },
-          photo_urls: [
-            `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/600/400/`,
-          ],
-          host: {
-            id: 'h3',
-            first_name: 'Lennox',
-            last_name: 'Síomha',
-            photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
-          },
-          location_name: 'Park',
-          cost: {
-            rate: 2.25,
-            currency: '$',
-            unit: 'day',
-          },
-          rating: 4.2,
-        },
-      ]);
-    }, 1000);
-  });
-};
-
 export default function Dropzones() {
   const { query } = useRouter();
   const [currentLocation, setCurrentLocation] = useState<LatLng>({
@@ -211,8 +133,8 @@ export default function Dropzones() {
                     onHover={() => {
                       setViewPort((prev) => ({
                         ...prev,
-                        latitude: dropzone.location.latitude,
-                        longitude: dropzone.location.longitude,
+                        latitude: dropzone.location.lat,
+                        longitude: dropzone.location.lng,
                         transitionDuration: 300,
                         transitionInterpolator: new FlyToInterpolator(),
                       }));
@@ -236,8 +158,8 @@ export default function Dropzones() {
             {dropzoneList.map((dropzone, i) => (
               <Marker
                 key={i}
-                latitude={dropzone.location.latitude}
-                longitude={dropzone.location.longitude}
+                latitude={dropzone.location.lat}
+                longitude={dropzone.location.lng}
                 offsetTop={-48}
                 offsetLeft={-24}
               >

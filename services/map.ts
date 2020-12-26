@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_DOMAIN } from 'constants/api';
 import { LatLng } from 'types';
 
 type GeocodeFeature = {
@@ -51,6 +52,16 @@ export async function getLocationByCode({ latitude, longitude }: LatLng) {
     const [, ...result] = data.plus_code.compound_code.split(' ');
 
     return result;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function getDropzones({ latitude, longitude }: LatLng) {
+  try {
+    const { data } = await axios.get(`${API_DOMAIN}/dropzones/lat=${latitude}&lng=${longitude}`);
+
+    return data;
   } catch (e) {
     throw e;
   }

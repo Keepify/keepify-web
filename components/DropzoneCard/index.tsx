@@ -15,26 +15,34 @@ const DropzoneCard = (props: Props) => (
     <Link href={`/dropzone/${props.id}`}>
       <a>
         <article className="overflow-hidden rounded-lg shadow-lg">
-          <img alt="Placeholder" className="block h-auto w-full" src={props.photo_urls[0]} />
+          <img alt="Placeholder" className="block h-auto w-full" src={props.thumbnail} />
           <header className="flex items-center justify-between leading-tight p-2 md:p-4">
             <h1 className="text-lg">
-              <span className="no-underline text-black">{props.location_name}</span>
+              <span className="no-underline text-black">{props.name}</span>
             </h1>
             <p className="text-grey-darker text-sm text-right">
-              {props.cost.currency}
-              {props.cost.rate}/{props.cost.unit}
+              ${props.rate}/{props.unit}
             </p>
           </header>
           <footer className="flex items-center justify-between leading-none p-2 md:p-4">
             <span className="flex items-center no-underline text-black">
-              <img alt="Placeholder" className="block rounded-full" src={props.host.photo} />
+              <img
+                alt="Placeholder"
+                className="block rounded-full"
+                src={`https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`}
+              />
               <p className="ml-2 text-sm">
-                {props.host.first_name} {props.host.last_name}
+                {props.host.fname} {props.host.lname}
               </p>
             </span>
             <p className="text-grey-darker text-sm text-right">
               {props.currentLocation &&
-                formatDistance(calculateDistance(props.currentLocation, props.location))}
+                formatDistance(
+                  calculateDistance(props.currentLocation, {
+                    latitude: props.location.lat,
+                    longitude: props.location.lng,
+                  })
+                )}
             </p>
           </footer>
         </article>
