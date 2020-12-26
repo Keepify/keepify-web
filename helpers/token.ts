@@ -5,6 +5,6 @@ export default function setAuthToken(token: string) {
   delete axios.defaults.headers.common['Authorization'];
 
   if (token) {
-    axios.defaults.headers.common['Authorization'] = `${token}`;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 }

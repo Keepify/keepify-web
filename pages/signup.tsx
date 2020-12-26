@@ -12,6 +12,9 @@ import { emailPattern, passwordPattern } from 'helpers/validation';
 import { useDispatch } from 'react-redux';
 import { signupUser } from 'services/user';
 import { setUserInfo } from 'actions/user';
+import { PageContext } from 'types';
+import { redirect } from 'middlewares/redirect';
+import { NextPage } from 'next';
 
 type Inputs = {
   firstName: string;
@@ -20,7 +23,7 @@ type Inputs = {
   password: string;
 };
 
-export default function Signup() {
+const Signup: NextPage = () => {
   const Router = useRouter();
   const { register, handleSubmit, errors } = useForm<Inputs>();
   const dispatch = useDispatch();
@@ -158,4 +161,14 @@ export default function Signup() {
       </div>
     </div>
   );
-}
+};
+
+Signup.getInitialProps = async (ctx: PageContext) => {
+  const { store } = ctx;
+
+  if (store.getState().user.isLogin) {
+    redirect(ctx.res, '/');
+  }
+};
+
+export default Signup;

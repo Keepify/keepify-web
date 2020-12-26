@@ -13,13 +13,16 @@ import { errorNotification } from 'helpers/notification';
 import { useDispatch } from 'react-redux';
 import { loginUser } from 'services/user';
 import { setUserInfo } from 'actions/user';
+import { NextPage } from 'next';
+import { PageContext } from 'types';
+import { redirect } from 'middlewares/redirect';
 
 type Inputs = {
   email: string;
   password: string;
 };
 
-export default function Login() {
+const Login: NextPage = () => {
   const Router = useRouter();
   const { register, handleSubmit, errors } = useForm<Inputs>();
   const dispatch = useDispatch();
@@ -122,4 +125,14 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
+
+Login.getInitialProps = async (ctx: PageContext) => {
+  const { store } = ctx;
+
+  if (store.getState().user.isLogin) {
+    redirect(ctx.res, '/');
+  }
+};
+
+export default Login;
