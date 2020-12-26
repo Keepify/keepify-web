@@ -15,6 +15,7 @@ import { setUserInfo } from 'actions/user';
 import { PageContext } from 'types';
 import { redirect } from 'middlewares/redirect';
 import { NextPage } from 'next';
+import Loader from 'components/Loader';
 
 type Inputs = {
   firstName: string;
@@ -53,6 +54,7 @@ const Signup: NextPage = () => {
   }
   return (
     <div className="flex justify-between">
+      {isLoading && <Loader />}
       <div className="w-1/2 min-h-screen relative">
         <Image className="object-cover" src="/sign/sign.png" layout="fill" alt="bg" />
       </div>
