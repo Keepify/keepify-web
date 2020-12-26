@@ -208,14 +208,14 @@ type Props = {
 DropzoneDetails.getInitialProps = async (ctx: NextPageContext) => {
   const { query } = ctx;
   const dropzone = await getDropzone(query.id as string);
-  const location = await getLocationByCode({
-    latitude: dropzone.location.lat,
-    longitude: dropzone.location.lng,
-  });
+  // const location = await getLocationByCode({
+  //   latitude: dropzone.location.lat,
+  //   longitude: dropzone.location.lng,
+  // });
 
   return {
     details: dropzone,
-    location: `${location[0]} ${location[1]}`,
+    location: 'Çankaya/Ankara, Turkey', // `${location[0]} ${location[1]}`,
   };
 };
 

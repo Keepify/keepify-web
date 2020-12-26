@@ -6,7 +6,7 @@ const Button: React.FC<React.HTMLProps<HTMLButtonElement>> = ({ children, classN
     <motion.button
       whileHover={{ translateY: -5 }}
       transition={{ duration: 0.3 }}
-      className={`bg-orange px-10 py-3 text-white rounded-lg focus:outline-none${
+      className={`bg-orange px-10 py-3 text-white rounded-lg outline-none focus:outline-none${
         className ? ' ' + className : ''
       }`}
     >

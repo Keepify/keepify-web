@@ -20,7 +20,7 @@ const Input: React.FC<Props> = forwardRef(
 
         <input
           ref={ref}
-          className={`flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border-0 h-10 border-grey-light rounded rounded-l-none self-center relative placeholder-light-grey focus:outline-none${
+          className={`flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border-0 h-10 border-grey-light rounded rounded-l-none self-center relative placeholder-light-grey outline-none focus:outline-none${
             className ? ' ' + className : ''
           }`}
           autoComplete="off"

@@ -43,8 +43,12 @@ const Signup: NextPage = () => {
       setIsLoading(false);
       Router.push('/');
     } catch (e) {
+      if (e?.response?.data?.message) {
+        errorNotification('Error', e.response.data.message);
+      } else {
+        errorNotification('Error', 'An unexpected error has occurred. Please try again later.');
+      }
       setIsLoading(false);
-      errorNotification('Error', e);
     }
   }
   return (
