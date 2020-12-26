@@ -11,19 +11,20 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import Button from 'components/Button';
 import { motion } from 'framer-motion';
+import { getDropzone } from 'services/dropzone';
+import { useUserInfo } from 'hooks/redux';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
+  const user = useUserInfo();
   const [viewPort, setViewPort] = useState<ViewportProps>({
-    latitude: details.location.latitude,
-    longitude: details.location.longitude,
+    latitude: details.location.lat,
+    longitude: details.location.lng,
     zoom: 12,
   } as ViewportProps);
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
   const [itemsNum, setItemsNum] = useState(1);
   const toRef = useRef(null);
-
-  console.log({ current: toRef.current });
 
   function decreaseNum() {
     if (itemsNum > 1) {
@@ -53,9 +54,9 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
               </Link>
             </li>
             <li>
-              <Link href="/login">
+              <Link href={user ? '/profile' : '/login'}>
                 <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
-                  Login
+                  {user ? 'Profile' : 'Login'}
                 </a>
               </Link>
             </li>
@@ -63,13 +64,13 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         </div>
       </nav>
       <div className="w-full">
-        <img src={details.photo_urls[0]} alt="thumbnail" className="w-full object-cover h-72" />
+        <img src={details.thumbnail} alt="thumbnail" className="w-full object-cover h-72" />
       </div>
 
       <div className="max-w-screen-lg my-0 mx-auto pt-20 flex">
         <div className="w-4/6 mr-12">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold">{details.location_name}</h1>
+            <h1 className="text-3xl font-bold">{details.name}</h1>
             <div className="text-xl font-bold flex">
               <Star fontSize={12} color="#FF8E6E" />
               <span className="ml-2">{details.rating}</span>
@@ -106,10 +107,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         </div>
         <div className="w-2/6">
           <div className="shadow-2xl rounded-lg p-8">
-            <p className="text-xl font-bold">
-              {details.cost.currency}
-              {details.cost.rate}/{details.cost.unit}
-            </p>
+            <p className="text-xl font-bold">${details.rate}/day</p>
             <p className="pt-6 pb-2 font-bold">Dates</p>
             <div className="flex">
               <div className="w-1/2">
@@ -188,8 +186,8 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
             <Marker
-              latitude={details.location.latitude}
-              longitude={details.location.longitude}
+              latitude={details.location.lat}
+              longitude={details.location.lng}
               offsetTop={-48}
               offsetLeft={-24}
             >
@@ -208,32 +206,15 @@ type Props = {
 };
 
 DropzoneDetails.getInitialProps = async (ctx: NextPageContext) => {
-  const dummy: DropzoneListItem = {
-    id: 'd1',
-    location: {
-      latitude: 39.8870344,
-      longitude: 32.8455316,
-    },
-    photo_urls: [`https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/1920/720/`],
-    host: {
-      id: 'h1',
-      first_name: 'Vida',
-      last_name: 'André',
-      photo: `https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`,
-    },
-    location_name: 'Sheraton Hotel',
-    cost: {
-      rate: 1.5,
-      currency: '$',
-      unit: 'day',
-    },
-    rating: 5,
-  };
-
-  const location = await getLocationByCode(dummy.location);
+  const { query } = ctx;
+  const dropzone = await getDropzone(query.id as string);
+  const location = await getLocationByCode({
+    latitude: dropzone.location.lat,
+    longitude: dropzone.location.lng,
+  });
 
   return {
-    details: dummy,
+    details: dropzone,
     location: `${location[0]} ${location[1]}`,
   };
 };

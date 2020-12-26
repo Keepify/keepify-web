@@ -3,5 +3,5 @@ export type User = {
   fname: string;
   lname: string;
   email: string;
-  role: number;
+  role: string;
 };

@@ -9,6 +9,9 @@ import { useState } from 'react';
 import { useFormError } from 'hooks/validation';
 import { errorNotification } from 'helpers/notification';
 import { emailPattern, passwordPattern } from 'helpers/validation';
+import { useDispatch } from 'react-redux';
+import { signupUser } from 'services/user';
+import { setUserInfo } from 'actions/user';
 
 type Inputs = {
   firstName: string;
@@ -20,17 +23,22 @@ type Inputs = {
 export default function Signup() {
   const Router = useRouter();
   const { register, handleSubmit, errors } = useForm<Inputs>();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
 
   useFormError(errors);
 
   async function onSubmit(data: Inputs) {
-    console.log({ data });
     try {
       setIsLoading(true);
 
+      const user = await signupUser(data.email, data.password, data.firstName, data.lastName);
+
+      dispatch(setUserInfo(user));
+
       setIsLoading(false);
+      Router.push('/');
     } catch (e) {
       setIsLoading(false);
       errorNotification('Error', e);

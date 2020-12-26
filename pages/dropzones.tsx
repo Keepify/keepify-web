@@ -7,14 +7,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { LatLng } from 'types';
 import { getGeocode } from 'services/map';
+import { getDropzones } from 'services/dropzone';
 import { useDebouncedCallback } from 'use-debounce';
 import Image from 'next/image';
 import { DropzoneListItem } from 'types/dropzone';
 import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
 import Pin from 'public/dropzone/pin';
+import { useUserInfo } from 'hooks/redux';
 
 export default function Dropzones() {
   const { query } = useRouter();
+  const user = useUserInfo();
   const [currentLocation, setCurrentLocation] = useState<LatLng>({
     latitude: query.lat ? Number(query.lat) : 0,
     longitude: query.lng ? Number(query.lng) : 0,
@@ -27,6 +30,7 @@ export default function Dropzones() {
   const [isLoading, setIsLoading] = useState(false);
   const [dropzoneList, setDropzoneList] = useState<DropzoneListItem[]>([]);
   const debouncedSearch = useDebouncedCallback(searchDropzone, 500);
+  const debouncedFetchDropzones = useDebouncedCallback(fetchDropzones, 500);
 
   // Request current location through navigator
   useEffect(() => {
@@ -42,25 +46,39 @@ export default function Dropzones() {
 
   useEffect(() => {
     (async () => {
-      setIsLoading(true);
-      const data = await getMockData();
-      console.log({ data });
-      setDropzoneList(data);
-      setViewPort((prev) => ({
-        ...prev,
-        ...data[0].location,
-        transitionDuration: 300,
-        transitionInterpolator: new FlyToInterpolator(),
-      }));
-      setIsLoading(false);
+      if (currentLocation.latitude && currentLocation.longitude) {
+        setIsLoading(true);
+        const data = await getDropzones(currentLocation);
+
+        if (data.length) {
+          setDropzoneList(data);
+          setViewPort((prev) => ({
+            ...prev,
+            latitude: data[0].location.lat,
+            longitude: data[0].location.lng,
+            transitionDuration: 300,
+            transitionInterpolator: new FlyToInterpolator(),
+          }));
+        }
+        setIsLoading(false);
+      }
     })();
   }, [currentLocation]);
+
+  async function fetchDropzones() {
+    setIsLoading(true);
+    const data = await getDropzones({ latitude: viewPort.latitude, longitude: viewPort.longitude });
+
+    setDropzoneList(data);
+    setIsLoading(false);
+  }
 
   async function searchDropzone(query: string) {
     if (query.trim().length) {
       const list = await getGeocode(query);
 
       if (list?.features?.length) {
+        await fetchDropzones();
         // move to the center of the first result
         setViewPort((prev) => ({
           ...prev,
@@ -90,9 +108,9 @@ export default function Dropzones() {
               </Link>
             </li>
             <li>
-              <Link href="/login">
+              <Link href={user ? '/profile' : '/login'}>
                 <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
-                  Login
+                  {user ? 'Profile' : 'Login'}
                 </a>
               </Link>
             </li>
@@ -151,7 +169,10 @@ export default function Dropzones() {
             {...viewPort}
             width="100%"
             height="100%"
-            onViewportChange={(viewport) => setViewPort(viewport)}
+            onViewportChange={(viewport) => {
+              setViewPort(viewport);
+              debouncedFetchDropzones.callback();
+            }}
             mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >

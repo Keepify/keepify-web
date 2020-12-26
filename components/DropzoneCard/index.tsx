@@ -4,6 +4,7 @@ import Skeleton from 'react-loading-skeleton';
 import { LatLng } from 'types';
 import { DropzoneListItem } from 'types/dropzone';
 import Link from 'next/link';
+import { User } from 'react-feather';
 
 type Props = DropzoneListItem & {
   onHover: () => void;
@@ -11,7 +12,7 @@ type Props = DropzoneListItem & {
 };
 
 const DropzoneCard = (props: Props) => (
-  <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3" onMouseEnter={props.onHover}>
+  <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
     <Link href={`/dropzone/${props.id}`}>
       <a>
         <article className="overflow-hidden rounded-lg shadow-lg">
@@ -20,17 +21,13 @@ const DropzoneCard = (props: Props) => (
             <h1 className="text-lg">
               <span className="no-underline text-black">{props.name}</span>
             </h1>
-            <p className="text-grey-darker text-sm text-right">
-              ${props.rate}/{props.unit}
-            </p>
+            <p className="text-grey-darker text-sm text-right">${props.rate}/day</p>
           </header>
           <footer className="flex items-center justify-between leading-none p-2 md:p-4">
             <span className="flex items-center no-underline text-black">
-              <img
-                alt="Placeholder"
-                className="block rounded-full"
-                src={`https://picsum.photos/id/${Math.floor(Math.random() * 81 + 1000)}/32/32/`}
-              />
+              <span className="flex justify-center items-center rounded-full bg-purple w-7 h-7">
+                <User color="#FF8E6E" size={14} />
+              </span>
               <p className="ml-2 text-sm">
                 {props.host.fname} {props.host.lname}
               </p>
