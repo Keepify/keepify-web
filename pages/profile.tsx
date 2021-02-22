@@ -4,6 +4,44 @@ import { PageContext } from 'types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Edit2 } from 'react-feather';
+import ProfileCard from 'components/ProfileCard';
+
+const mockTransaction = {
+  cost: 50.0,
+  creation_time: 'Fri, 05 Nov 2021 00:00:00 GMT',
+  dropzone: {
+    host: {
+      email: 'a@mail.com',
+      fname: 'Mark',
+      id: '65c141ee-1fde-b269-d2e3-93cb1d3e1c09',
+      lname: 'ZUCK',
+      role: 'HOST',
+    },
+    id: '269638b9-0611-49e9-228d-1b2718cb035e',
+    location: {
+      lat: -73.878993913,
+      lng: 40.721959482,
+    },
+    name: 'bilkent',
+    rate: null,
+    rating: null,
+    services: null,
+    thumbnail: null,
+    type: null,
+    unit: null,
+  },
+  id: '020bce01-ba6a-6623-702c-4da1bc6d556e',
+  reservation_end: null,
+  reservation_start: null,
+  status: 'COMPLETED',
+  user: {
+    email: 'user@mail.com',
+    fname: 'Bill',
+    id: '65c141ee-1fde-b269-d2e3-93cb1d3e1c09',
+    lname: 'Gates',
+    role: 'USER',
+  },
+};
 
 const Profile: NextPage<Props> = () => {
   return (
@@ -85,8 +123,31 @@ const Profile: NextPage<Props> = () => {
 
               <span style={{ height: 1 }} className="flex mb-8 w-24 bg-purple bg-opacity-30" />
 
-              <div className="w-full p-12 shadow-2xl rounded-xl flex flex-col items-center justify-center">
-                <span className="w-8">
+              <div className="container mx-auto">
+                <div className="flex flex-wrap -mx-1 lg:-mx-4">
+                  <ProfileCard
+                    label="2021.02.02 - 2021.02.05"
+                    img="https://picsum.photos/920/580"
+                    header="Bilkent Dorm 77"
+                    tagText="Confirmed"
+                  />
+                  <ProfileCard
+                    label="2021.02.02 - 2021.02.05"
+                    img="https://picsum.photos/920/580"
+                    header="Bilkent Dorm 77"
+                    tagText="Confirmed"
+                  />
+                  <ProfileCard
+                    label="2021.02.02 - 2021.02.05"
+                    img="https://picsum.photos/920/580"
+                    header="Bilkent Dorm 77"
+                    tagText="Confirmed"
+                  />
+                </div>
+              </div>
+
+              {/* <div className="w-full p-12 shadow-2xl rounded-xl flex flex-col items-center justify-center">
+                <span className="w-32">
                   <Image src="/profile/empty.svg" alt="empty" width={350} height={350} />
                 </span>
                 <h3 className="text-purple text-lg pt-4 pb-2">No past orders yet!</h3>
@@ -96,7 +157,7 @@ const Profile: NextPage<Props> = () => {
                   </Link>{' '}
                   and keep your first item!
                 </p>
-              </div>
+              </div> */}
             </section>
           </div>
         </div>
