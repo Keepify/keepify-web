@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useUserInfo } from 'hooks/redux';
 import { motion } from 'framer-motion';
 import Input from 'components/Input';
-import { Mail, Lock, User } from 'react-feather';
+import { Mail, X, User } from 'react-feather';
 import Button from 'components/Button';
 import { useForm } from 'react-hook-form';
 import { useFormError } from 'hooks/validation';
@@ -108,8 +108,14 @@ const Profile: NextPage<Props> = () => {
   return (
     <div className="relative">
       {isLoading && <Loader />}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isModalOpen}>
         <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 w-160 p-8 relative flex overflow-hidden">
+          <span
+            className="absolute top-8 right-8 cursor-pointer"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <X size={24} color="#000" />
+          </span>
           <form className="w-full flex flex-col" onSubmit={handleSubmit(onUpdateProfile)}>
             <h2 className="text-3xl mb-8 text-dark">Edit Profile</h2>
             <div className="pb-6 flex justify-between">
