@@ -1,7 +1,5 @@
+import { LOGOUT_USER, SET_USER_INFO, UPDATE_USER_INFO } from 'store/reducers/user';
 import { User } from 'types/user';
-
-export const SET_USER_INFO = 'SET_USER_INFO';
-export const LOGOUT_USER = 'LOGOUT_USER';
 
 export function setUserInfo(user: User) {
   return {
@@ -12,4 +10,11 @@ export function setUserInfo(user: User) {
 
 export function logoutUser() {
   return { type: LOGOUT_USER };
+}
+
+export function updateUserInfo(user: Partial<User>) {
+  return {
+    type: UPDATE_USER_INFO,
+    payload: user,
+  };
 }

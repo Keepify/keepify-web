@@ -10,6 +10,13 @@ module.exports = {
         '3/5': '60%',
         '3/4': '75%',
       },
+      spacing: {
+        72: '18rem',
+        84: '21rem',
+        96: '24rem',
+        120: '30rem',
+        160: '40rem',
+      },
     },
     fontFamily: {
       body: ['Sen', 'Sans-serif'],

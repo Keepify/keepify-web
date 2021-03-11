@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { motion } from 'framer-motion';
 
 type Props = {
   label: string;
@@ -9,7 +10,11 @@ type Props = {
 };
 
 const ProfileCard: React.FC<Props> = (props) => (
-  <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3 h-48">
+  <motion.div
+    whileHover={{ translateY: -5 }}
+    transition={{ duration: 0.3 }}
+    className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3 h-48 cursor-pointer"
+  >
     <article
       className="overflow-hidden rounded-lg shadow-lg relative w-full h-full"
       style={{ background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.55))' }}
@@ -30,7 +35,7 @@ const ProfileCard: React.FC<Props> = (props) => (
         </span>
       </footer>
     </article>
-  </div>
+  </motion.div>
 );
 
 ProfileCard.defaultProps = {
