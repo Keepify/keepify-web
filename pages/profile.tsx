@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { updateUserInfo } from 'actions/user';
 import { errorNotification } from 'helpers/notification';
 import { emailPattern } from 'helpers/validation';
+import { updateUser } from 'services/user';
 
 const mockTransaction = {
   cost: 50.0,
@@ -85,13 +86,16 @@ const Profile: NextPage<Props> = () => {
     try {
       setIsLoading(true);
 
-      dispatch(
-        updateUserInfo({
-          fname: data.firstName,
-          lname: data.lastName,
-          email: data.email,
-        })
-      );
+      const payload = {
+        fname: data.firstName,
+        lname: data.lastName,
+        email: data.email,
+      };
+
+      const result = await updateUser(payload);
+      console.log({ result });
+
+      dispatch(updateUserInfo(payload));
 
       setIsLoading(false);
       setIsModalOpen(false);

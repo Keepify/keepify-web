@@ -51,3 +51,13 @@ export async function getUser() {
     throw e;
   }
 }
+
+export async function updateUser(user: Partial<User>) {
+  try {
+    const { data } = await axios.put(`${API_DOMAIN}/users/me`, user);
+
+    return data;
+  } catch (e) {
+    throw e;
+  }
+}
