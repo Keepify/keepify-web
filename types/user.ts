@@ -4,4 +4,5 @@ export type User = {
   lname: string;
   email: string;
   role: string;
+  image_url: string;
 };

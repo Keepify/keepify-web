@@ -5,17 +5,30 @@ import { motion } from 'framer-motion';
 import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
 import { useEffect, useMemo, useState } from 'react';
-import { LatLng } from 'types';
+import { LatLng, PageContext } from 'types';
 import { useUserInfo } from 'hooks/redux';
+import { NextPage } from 'next';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import cookies from 'js-cookie';
 
-export default function Home() {
+const Home: NextPage = () => {
   const [position, setPosition] = useState<LatLng>(null);
   const { isLogin } = useUserInfo();
+  const Router = useRouter();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       setPosition({ latitude: position.coords.latitude, longitude: position.coords.longitude });
     });
+  }, []);
+
+  useEffect(() => {
+    if (Router.query.logout) {
+      delete axios.defaults.headers.common['Authorization'];
+      cookies.remove('_ap.ut');
+      Router.push('/');
+    }
   }, []);
 
   const positionQuery = useMemo(() => {
@@ -79,4 +92,17 @@ export default function Home() {
       </section>
     </div>
   );
-}
+};
+
+Home.getInitialProps = async (ctx: PageContext) => {
+  const { query } = ctx;
+
+  if (query.logout) {
+    ctx.store.dispatch({ type: 'LOGOUT_USER' });
+    delete axios.defaults.headers.common['Authorization'];
+  }
+
+  return {};
+};
+
+export default Home;

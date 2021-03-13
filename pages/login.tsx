@@ -40,7 +40,7 @@ const Login: NextPage = () => {
       dispatch(setUserInfo(user));
 
       setIsLoading(false);
-      Router.push('/');
+      Router.push('/profile');
     } catch (e) {
       if (e?.response?.data?.message) {
         errorNotification('Error', e.response.data.message);

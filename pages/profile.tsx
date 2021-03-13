@@ -2,6 +2,7 @@ import { redirect } from 'middlewares/redirect';
 import { NextPage } from 'next';
 import { PageContext } from 'types';
 import Link from 'next/link';
+import Router from 'next/router';
 import Image from 'next/image';
 import { Edit2 } from 'react-feather';
 import ProfileCard from 'components/ProfileCard';
@@ -16,11 +17,13 @@ import { useForm } from 'react-hook-form';
 import { useFormError } from 'hooks/validation';
 import Loader from 'components/Loader';
 import { useDispatch } from 'react-redux';
-import { updateUserInfo } from 'actions/user';
+import { logoutUser, updateUserInfo } from 'actions/user';
 import { errorNotification } from 'helpers/notification';
 import { emailPattern } from 'helpers/validation';
-import { updateUser } from 'services/user';
+import { updateUser, uploadProfileImg } from 'services/user';
 import { getTransactions } from 'services/transactions';
+import axios from 'axios';
+import cookies from 'js-cookie';
 
 const mockTransaction = {
   cost: 50.0,
@@ -71,6 +74,7 @@ const Profile: NextPage<Props> = () => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [profileImg, setProfileImg] = useState(userInfo?.image_url);
 
   useFormError(errors);
 
@@ -83,12 +87,13 @@ const Profile: NextPage<Props> = () => {
     }
   }, [isModalOpen]);
 
-  useEffect(() => {
-    (async () => {
-      // const data = await getTransactions();
-      // console.log({ data });
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const data = await getTransactions();
+
+  //     console.log({ data });
+  //   })();
+  // }, []);
 
   async function onUpdateProfile(data: EditProfileFields) {
     try {
@@ -116,6 +121,21 @@ const Profile: NextPage<Props> = () => {
       setIsLoading(false);
     }
   }
+
+  async function handleProfileImgChange(e) {
+    const file = e.target.files[0];
+    try {
+      await uploadProfileImg(file);
+      setProfileImg(URL.createObjectURL(file));
+    } catch (e) {
+      errorNotification(
+        'Error',
+        'An error occurred while uploading the image. Please try again later.'
+      );
+    }
+  }
+
+  if (!userInfo) return null;
 
   return (
     <div className="relative">
@@ -214,9 +234,11 @@ const Profile: NextPage<Props> = () => {
                 </a>
               </li>
               <li>
-                <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
-                  Logout
-                </a>
+                <Link href={`/?logout=${+new Date()}`}>
+                  <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
+                    Logout
+                  </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -232,15 +254,26 @@ const Profile: NextPage<Props> = () => {
       </header>
       <div className="relative w-full">
         <div className="max-w-screen-lg mx-auto">
-          <div className="absolute w-32 h-32 -top-16 bg-orange-light bg-opacity-40 rounded-full flex justify-center items-center">
+          <label
+            htmlFor="profile-img"
+            className="absolute w-32 h-32 -top-16 bg-orange-light bg-opacity-40 rounded-full flex justify-center items-center"
+          >
             <motion.img
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3 }}
               className="w-24 h-24 rounded-full object-cover cursor-pointer"
-              src="https://picsum.photos/600"
+              src={profileImg ?? 'https://picsum.photos/600'}
               alt="profile-img"
             />
-          </div>
+          </label>
+          <input
+            type="file"
+            id="profile-img"
+            accept="image/*"
+            onChange={handleProfileImgChange}
+            className="absolute p-0 hidden border-0"
+            style={{ width: 1, height: 1, margin: -1, clip: 'rect(0, 0, 0, 0)' }}
+          />
           <div className="pb-28 pt-32">
             <section className="pb-20">
               <div className="flex justify-between items-center pb-5">

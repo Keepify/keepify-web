@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import NProgress from 'nprogress';
 import Router from 'next/router';
 import ReactNotification from 'react-notifications-component';
@@ -25,7 +25,7 @@ Router.events.on('routeChangeError', () => NProgress.done());
 function MyApp({ Component, pageProps }) {
   const { isLogin } = useUserInfo();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isLogin) {
       // bind token to axios header
       const token = cookie.get('_ap.ut');
