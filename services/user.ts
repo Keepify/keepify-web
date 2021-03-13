@@ -44,9 +44,9 @@ export async function signupUser(email: string, password: string, fname: string,
 
 export async function getUser() {
   try {
-    const { data } = await axios.get<{ user: User }>(`${API_DOMAIN}/users`);
+    const { data } = await axios.get<{ me: User }>(`${API_DOMAIN}/users/me`);
 
-    return data.user;
+    return data.me;
   } catch (e) {
     throw e;
   }

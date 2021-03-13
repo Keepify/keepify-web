@@ -20,6 +20,7 @@ import { updateUserInfo } from 'actions/user';
 import { errorNotification } from 'helpers/notification';
 import { emailPattern } from 'helpers/validation';
 import { updateUser } from 'services/user';
+import { getTransactions } from 'services/transactions';
 
 const mockTransaction = {
   cost: 50.0,
@@ -81,6 +82,13 @@ const Profile: NextPage<Props> = () => {
       setValue('lastName', userInfo.lname);
     }
   }, [isModalOpen]);
+
+  useEffect(() => {
+    (async () => {
+      // const data = await getTransactions();
+      // console.log({ data });
+    })();
+  }, []);
 
   async function onUpdateProfile(data: EditProfileFields) {
     try {

@@ -48,7 +48,12 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           <ul className="flex flex-row">
             <li>
               <Link href="/about">
-                <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
+                <a
+                  className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
+                  href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   Become a Host
                 </a>
               </Link>
