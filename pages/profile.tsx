@@ -25,6 +25,8 @@ import { Transaction } from 'types/transaction';
 import moment from 'moment';
 import { DropzoneListItem } from 'types/dropzone';
 import { getAllDropzones } from 'services/dropzone';
+import nextCookie from 'next-cookies';
+import setAuthToken from 'helpers/token';
 
 type EditProfileFields = {
   firstName: string;
@@ -361,7 +363,12 @@ type Props = {
 };
 
 Profile.getInitialProps = async (ctx: PageContext) => {
+  const cookies = nextCookie(ctx);
   try {
+    if (cookies['_ap.ut']) {
+      // set JWT token to axios header
+      setAuthToken(cookies['_ap.ut']);
+    }
     const { isLogin, userInfo } = ctx.store.getState().user;
     if (!isLogin) {
       throw new Error('Not logged in');
@@ -383,7 +390,8 @@ Profile.getInitialProps = async (ctx: PageContext) => {
       transactions,
     };
   } catch (e) {
-    redirect(ctx.res, '/');
+    console.log(e);
+    // redirect(ctx.res, '/');
   }
 };
 
