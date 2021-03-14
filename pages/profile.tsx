@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import { PageContext } from 'types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Edit2 } from 'react-feather';
+import { Edit2, PlusCircle } from 'react-feather';
 import ProfileCard from 'components/ProfileCard';
 import Modal from 'components/Modal';
 import { useEffect, useState } from 'react';
@@ -23,6 +23,8 @@ import { updateUser, uploadProfileImg } from 'services/user';
 import { getTransactions } from 'services/transactions';
 import { Transaction } from 'types/transaction';
 import moment from 'moment';
+import { DropzoneListItem } from 'types/dropzone';
+import { getAllDropzones } from 'services/dropzone';
 
 type EditProfileFields = {
   firstName: string;
@@ -30,7 +32,7 @@ type EditProfileFields = {
   email: string;
 };
 
-const Profile: NextPage<Props> = ({ transactions }) => {
+const Profile: NextPage<Props> = ({ transactions, dropzones }) => {
   const { userInfo } = useUserInfo();
   const { register, handleSubmit, errors, setValue } = useForm<EditProfileFields>();
   const dispatch = useDispatch();
@@ -270,8 +272,7 @@ const Profile: NextPage<Props> = ({ transactions }) => {
                 </div> */}
               </div>
             </section>
-
-            <section>
+            <section className="pb-20">
               <div className="flex justify-between items-center pb-5">
                 <h2 className="text-orange text-2xl tracking-widest">Past Keeps</h2>
               </div>
@@ -312,6 +313,41 @@ const Profile: NextPage<Props> = ({ transactions }) => {
                 </div>
               </div>
             </section>
+            {userInfo.role === '1' && (
+              <section>
+                <div className="flex justify-between items-center pb-5">
+                  <h2 className="text-orange text-2xl tracking-widest">My Storages</h2>
+                  <a
+                    className="flex items-center"
+                    href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <PlusCircle size={18} color="#FF8E6E" />
+                    <p className="text-orange text-lg pl-4 tracking-wide">Apply New Storage</p>
+                  </a>
+                </div>
+
+                <span style={{ height: 1 }} className="flex mb-8 w-24 bg-purple bg-opacity-30" />
+
+                <div className="container mx-auto">
+                  <div className="flex flex-wrap -mx-1 lg:-mx-4">
+                    {dropzones?.length
+                      ? dropzones.map((dropzone, i) => (
+                          <ProfileCard
+                            key={i}
+                            href={`/dropzone/${dropzone.id}`}
+                            label={`${dropzone.rate}/${dropzone.unit}`}
+                            img={dropzone.thumbnail}
+                            header={dropzone.name}
+                            tagText="Open"
+                          />
+                        ))
+                      : null}
+                  </div>
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </div>
@@ -321,16 +357,27 @@ const Profile: NextPage<Props> = ({ transactions }) => {
 
 type Props = {
   transactions: Transaction[];
+  dropzones?: DropzoneListItem[];
 };
 
 Profile.getInitialProps = async (ctx: PageContext) => {
   try {
-    const { isLogin } = ctx.store.getState().user;
+    const { isLogin, userInfo } = ctx.store.getState().user;
     if (!isLogin) {
       throw new Error('Not logged in');
     }
 
     const transactions = await getTransactions();
+
+    // if the user is a host, get dropzones
+    if (userInfo.role === '1') {
+      const dropzones = await getAllDropzones();
+
+      return {
+        transactions,
+        dropzones,
+      };
+    }
 
     return {
       transactions,
