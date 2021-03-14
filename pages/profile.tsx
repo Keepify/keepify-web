@@ -20,7 +20,7 @@ import { updateUserInfo } from 'actions/user';
 import { errorNotification } from 'helpers/notification';
 import { emailPattern } from 'helpers/validation';
 import { updateUser, uploadProfileImg } from 'services/user';
-import { getTransactions } from 'services/transactions';
+import { getTransaction, getTransactions } from 'services/transactions';
 import { Transaction } from 'types/transaction';
 import moment from 'moment';
 import { DropzoneListItem } from 'types/dropzone';
@@ -34,7 +34,8 @@ type EditProfileFields = {
   email: string;
 };
 
-const Profile: NextPage<Props> = ({ transactions, dropzones }) => {
+const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions }) => {
+  console.log({ transactions, dropzones, currentTransactions });
   const { userInfo } = useUserInfo();
   const { register, handleSubmit, errors, setValue } = useForm<EditProfileFields>();
   const dispatch = useDispatch();
@@ -274,6 +275,35 @@ const Profile: NextPage<Props> = ({ transactions, dropzones }) => {
                 </div> */}
               </div>
             </section>
+            {userInfo.role === '1' && currentTransactions?.length && (
+              <section className="pb-20">
+                <div className="flex justify-between items-center pb-5">
+                  <h2 className="text-orange text-2xl tracking-widest">Current Transactions</h2>
+                </div>
+
+                <span style={{ height: 1 }} className="flex mb-8 w-24 bg-purple bg-opacity-30" />
+
+                <div className="container mx-auto">
+                  <div className="flex flex-wrap -mx-1 lg:-mx-4">
+                    {currentTransactions.map((transaction, i) => (
+                      <ProfileCard
+                        key={i}
+                        href={`/order/${transaction.id}`}
+                        label={
+                          moment(transaction.reservation_start).format('YYYY.MM.DD') +
+                          ' - ' +
+                          moment(transaction.reservation_end).format('YYYY.MM.DD')
+                        }
+                        img={transaction.dropzone.thumbnail}
+                        header={transaction.dropzone.name}
+                        tagText={transaction.status}
+                        tagColor={transaction.status === 'CREATED' ? 'bg-green' : null}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
             <section className="pb-20">
               <div className="flex justify-between items-center pb-5">
                 <h2 className="text-orange text-2xl tracking-widest">Past Keeps</h2>
@@ -296,6 +326,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones }) => {
                         img={transaction.dropzone.thumbnail}
                         header={transaction.dropzone.name}
                         tagText={transaction.status}
+                        tagColor={transaction.status === 'CREATED' ? 'bg-green' : null}
                       />
                     ))
                   ) : (
@@ -339,7 +370,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones }) => {
                           <ProfileCard
                             key={i}
                             href={`/dropzone/${dropzone.id}`}
-                            label={`${dropzone.rate}/${dropzone.unit}`}
+                            label={`$${dropzone.rate}/${dropzone.unit}`}
                             img={dropzone.thumbnail}
                             header={dropzone.name}
                             tagText="Open"
@@ -358,6 +389,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones }) => {
 };
 
 type Props = {
+  currentTransactions?: Transaction[];
   transactions: Transaction[];
   dropzones?: DropzoneListItem[];
 };
@@ -379,10 +411,12 @@ Profile.getInitialProps = async (ctx: PageContext) => {
     // if the user is a host, get dropzones
     if (userInfo.role === '1') {
       const dropzones = await getAllDropzones();
+      const currentTransactions = await getTransactions({ status: 'CREATED' });
 
       return {
         transactions,
         dropzones,
+        currentTransactions,
       };
     }
 

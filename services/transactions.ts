@@ -2,10 +2,14 @@ import axios from 'axios';
 import { API_DOMAIN } from 'constants/api';
 import { Transaction } from 'types/transaction';
 
-export async function getTransactions() {
+type GetTransactionParams = {
+  status?: string;
+};
+
+export async function getTransactions(params?: GetTransactionParams) {
   try {
     const { data } = await axios.get<{ transactions: Transaction[] }>(
-      `${API_DOMAIN}/transactions/`
+      `${API_DOMAIN}/transactions/?${params?.status ? new URLSearchParams(params).toString() : ''}`
     );
 
     return data.transactions;
