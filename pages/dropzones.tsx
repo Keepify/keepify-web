@@ -40,6 +40,18 @@ export default function Dropzones() {
           longitude: position.coords.longitude,
         });
       });
+    } else {
+      setCurrentLocation({
+        latitude: Number(query.lat as string),
+        longitude: Number(query.lng as string),
+      });
+      setViewPort((prev) => ({
+        ...prev,
+        latitude: Number(query.lat as string),
+        longitude: Number(query.lng as string),
+        transitionDuration: 300,
+        transitionInterpolator: new FlyToInterpolator(),
+      }));
     }
   }, []);
 
@@ -65,9 +77,16 @@ export default function Dropzones() {
   }, [currentLocation]);
 
   async function fetchDropzones() {
-    const data = await getDropzones({ latitude: viewPort.latitude, longitude: viewPort.longitude });
+    try {
+      const data = await getDropzones({
+        latitude: viewPort.latitude,
+        longitude: viewPort.longitude,
+      });
 
-    setDropzoneList(data);
+      setDropzoneList(data);
+    } catch (e) {
+      return;
+    }
   }
 
   async function searchDropzone(query: string) {

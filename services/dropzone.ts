@@ -6,7 +6,7 @@ import { DropzoneListItem } from 'types/dropzone';
 export async function getDropzones({ latitude, longitude }: LatLng) {
   try {
     const { data } = await axios.get<{ data: DropzoneListItem[] }>(
-      `${API_DOMAIN}/dropzones?lat=${latitude}&lng=${longitude}`
+      `${API_DOMAIN}/dropzones/?lat=${latitude}&lng=${longitude}`
     );
 
     return data.data;
@@ -18,7 +18,7 @@ export async function getDropzones({ latitude, longitude }: LatLng) {
 export async function getDropzone(id: string) {
   try {
     const { data } = await axios.get<{ dropzone: DropzoneListItem }>(
-      `${API_DOMAIN}/get-dropzone?id=${id}`
+      `${API_DOMAIN}/dropzones/${id}`
     );
 
     return data.dropzone;
