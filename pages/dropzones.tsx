@@ -39,6 +39,13 @@ export default function Dropzones() {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
+        setViewPort((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          transitionDuration: 300,
+          transitionInterpolator: new FlyToInterpolator(),
+        }));
       });
     } else {
       setCurrentLocation({
