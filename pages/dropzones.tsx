@@ -13,6 +13,7 @@ import { DropzoneListItem } from 'types/dropzone';
 import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
 import Pin from 'public/dropzone/pin';
 import { useUserInfo } from 'hooks/redux';
+import Image from 'next/image';
 
 export default function Dropzones() {
   const { query } = useRouter();
@@ -167,6 +168,15 @@ export default function Dropzones() {
           </div>
           <h2 className="text-black font-bold text-2xl pb-4">Nearby Storages</h2>
           <div className="container mx-auto">
+            {!dropzoneList.length && (
+              <div className="w-full p-12 shadow-2xl rounded-xl flex flex-col items-center justify-center">
+                <span className="w-32">
+                  <Image src="/profile/empty.svg" alt="empty" width={350} height={350} />
+                </span>
+                <h3 className="text-purple text-lg pt-4 pb-2">No storage found!</h3>
+                <p>Try discovering other places too!</p>
+              </div>
+            )}
             <div className="flex flex-wrap -mx-1 lg:-mx-4">
               {isLoading ? (
                 <>
