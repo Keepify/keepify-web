@@ -58,6 +58,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
       setIsLoading(true);
 
       const payload = {
+        ...userInfo,
         fname: data.firstName,
         lname: data.lastName,
         email: data.email,
@@ -84,7 +85,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
     try {
       setIsLoading(true);
       const imgURL = await uploadProfileImg(file);
-      await updateUser({ image_url: imgURL });
+      await updateUser({ ...userInfo, image_url: imgURL });
       setIsLoading(false);
       dispatch(updateUserInfo({ image_url: imgURL }));
     } catch (e) {
