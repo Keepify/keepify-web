@@ -284,6 +284,7 @@ const Profile: NextPage<Props> = ({ transactions }) => {
                     transactions.map((transaction, i) => (
                       <ProfileCard
                         key={i}
+                        href={`/order/${transaction.id}`}
                         label={
                           moment(transaction.reservation_start).format('YYYY.MM.DD') +
                           ' - ' +

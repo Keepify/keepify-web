@@ -7,13 +7,15 @@ type Props = {
   header: string;
   tagText: string;
   tagColor?: string;
+  href?: string;
 };
 
 const ProfileCard: React.FC<Props> = (props) => (
-  <motion.div
+  <motion.a
     whileHover={{ translateY: -5 }}
     transition={{ duration: 0.3 }}
     className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3 h-48 cursor-pointer"
+    href={props.href ?? '#'}
   >
     <article
       className="overflow-hidden rounded-lg shadow-lg relative w-full h-full"
@@ -35,7 +37,7 @@ const ProfileCard: React.FC<Props> = (props) => (
         </span>
       </footer>
     </article>
-  </motion.div>
+  </motion.a>
 );
 
 ProfileCard.defaultProps = {

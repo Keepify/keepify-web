@@ -13,3 +13,15 @@ export async function getTransactions() {
     throw e;
   }
 }
+
+export async function getTransaction(id: string) {
+  try {
+    const { data } = await axios.get<{ transactions: Transaction[] }>(
+      `${API_DOMAIN}/transactions/?uuid=${id}`
+    );
+
+    return data.transactions[0];
+  } catch (e) {
+    throw e;
+  }
+}
