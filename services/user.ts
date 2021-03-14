@@ -3,7 +3,6 @@ import { API_DOMAIN } from 'constants/api';
 import setAuthToken from 'helpers/token';
 import { User } from 'types/user';
 import cookie from 'js-cookie';
-import NProgress from 'nprogress';
 
 export async function loginUser(email: string, password: string) {
   try {
@@ -69,18 +68,18 @@ export async function uploadProfileImg(file) {
     body.append('image', file);
 
     const config = {
-      onUploadProgress: function (progressEvent) {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        NProgress.set(percentCompleted * 0.01);
-      },
       headers: {
         'content-type': 'application/json',
       },
     };
 
-    const { data } = await axios.post(`${API_DOMAIN}/media/image`, body, config);
+    const { data } = await axios.post<{ location: string }>(
+      `${API_DOMAIN}/media/image`,
+      body,
+      config
+    );
 
-    return data;
+    return data.location;
   } catch (e) {
     throw e;
   }

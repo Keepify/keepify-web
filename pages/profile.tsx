@@ -16,7 +16,7 @@ import { useForm } from 'react-hook-form';
 import { useFormError } from 'hooks/validation';
 import Loader from 'components/Loader';
 import { useDispatch } from 'react-redux';
-import { updateUserInfo } from 'actions/user';
+import { setUserInfo, updateUserInfo } from 'actions/user';
 import { errorNotification } from 'helpers/notification';
 import { emailPattern } from 'helpers/validation';
 import { updateUser, uploadProfileImg } from 'services/user';
@@ -41,7 +41,6 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [profileImg, setProfileImg] = useState(userInfo?.image_url);
 
   useFormError(errors);
 
@@ -64,8 +63,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
         email: data.email,
       };
 
-      const result = await updateUser(payload);
-      console.log({ result });
+      await updateUser(payload);
 
       dispatch(updateUserInfo(payload));
 
@@ -84,9 +82,13 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
   async function handleProfileImgChange(e) {
     const file = e.target.files[0];
     try {
-      await uploadProfileImg(file);
-      setProfileImg(URL.createObjectURL(file));
+      setIsLoading(true);
+      const imgURL = await uploadProfileImg(file);
+      await updateUser({ image_url: imgURL });
+      setIsLoading(false);
+      dispatch(updateUserInfo({ image_url: imgURL }));
     } catch (e) {
+      setIsLoading(false);
       errorNotification(
         'Error',
         'An error occurred while uploading the image. Please try again later.'
@@ -221,7 +223,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3 }}
               className="w-24 h-24 rounded-full object-cover cursor-pointer"
-              src={profileImg ?? 'https://picsum.photos/600'}
+              src={userInfo?.image_url ?? 'https://picsum.photos/600'}
               alt="profile-img"
             />
           </label>
