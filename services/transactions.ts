@@ -20,11 +20,11 @@ export async function getTransactions(params?: GetTransactionParams) {
 
 export async function getTransaction(id: string) {
   try {
-    const { data } = await axios.get<{ transactions: Transaction[] }>(
-      `${API_DOMAIN}/transactions/?uuid=${id}`
+    const { data } = await axios.get<{ transaction: Transaction }>(
+      `${API_DOMAIN}/transactions/${id}`
     );
 
-    return data.transactions[0];
+    return data.transaction;
   } catch (e) {
     throw e;
   }

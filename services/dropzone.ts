@@ -5,9 +5,9 @@ import { DropzoneListItem } from 'types/dropzone';
 
 export async function getAllDropzones() {
   try {
-    const { data } = await axios.get<{ data: DropzoneListItem[] }>(`${API_DOMAIN}/dropzones/`);
+    const { data } = await axios.get<{ dropzones: DropzoneListItem[] }>(`${API_DOMAIN}/dropzones/`);
 
-    return data.data;
+    return data.dropzones;
   } catch (e) {
     throw e;
   }

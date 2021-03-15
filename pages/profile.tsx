@@ -34,6 +34,11 @@ type EditProfileFields = {
   email: string;
 };
 
+const tagColor = {
+  CREATED: 'bg-green',
+  COMPLETED: 'bg-purple',
+};
+
 const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions }) => {
   console.log({ transactions, dropzones, currentTransactions });
   const { userInfo } = useUserInfo();
@@ -300,7 +305,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                         img={transaction.dropzone.thumbnail}
                         header={transaction.dropzone.name}
                         tagText={transaction.status}
-                        tagColor={transaction.status === 'CREATED' ? 'bg-green' : null}
+                        tagColor={tagColor[transaction.status]}
                       />
                     ))}
                   </div>
@@ -329,7 +334,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                         img={transaction.dropzone.thumbnail}
                         header={transaction.dropzone.name}
                         tagText={transaction.status}
-                        tagColor={transaction.status === 'CREATED' ? 'bg-green' : null}
+                        tagColor={tagColor[transaction.status]}
                       />
                     ))
                   ) : (

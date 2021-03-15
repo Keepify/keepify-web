@@ -3,6 +3,7 @@ import { User } from './user';
 export type DropzoneListItem = {
   id: string;
   name: string;
+  d_type: string;
   host: User;
   thumbnail: string;
   location: {
