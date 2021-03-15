@@ -15,11 +15,11 @@ export async function getAllDropzones() {
 
 export async function getDropzones({ latitude, longitude }: LatLng) {
   try {
-    const { data } = await axios.get<{ data: DropzoneListItem[] }>(
+    const { data } = await axios.get<{ dropzones: DropzoneListItem[] }>(
       `${API_DOMAIN}/dropzones/?lat=${latitude}&lng=${longitude}`
     );
 
-    return data.data;
+    return data.dropzones;
   } catch (e) {
     throw e;
   }
