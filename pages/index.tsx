@@ -46,13 +46,13 @@ const Home: NextPage = () => {
             <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>
           </Link>
           <ul className="flex flex-row">
-            <li>
+            {/* <li>
               <Link href="/about">
                 <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
                   About
                 </a>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href={isLogin ? '/profile' : '/login'}>
                 <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
