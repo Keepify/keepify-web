@@ -191,14 +191,22 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             </Link>
             <ul className="flex flex-row">
               <li>
-                <a
-                  className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition"
-                  href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Become a Host
-                </a>
+                {userInfo.role === '1' ? (
+                  <Link href="/dropzones">
+                    <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
+                      Dropzones
+                    </a>
+                  </Link>
+                ) : (
+                  <a
+                    className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition"
+                    href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Become a Host
+                  </a>
+                )}
               </li>
               <li>
                 <Link href={`/?logout=${+new Date()}`}>
