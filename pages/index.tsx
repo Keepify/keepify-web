@@ -11,9 +11,12 @@ import { NextPage } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import cookies from 'js-cookie';
+import { Menu } from 'react-feather';
+import Drawer from 'components/Drawer';
 
 const Home: NextPage = () => {
   const [position, setPosition] = useState<LatLng>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
   const { isLogin } = useUserInfo();
   const Router = useRouter();
 
@@ -40,12 +43,19 @@ const Home: NextPage = () => {
 
   return (
     <div>
+      <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+        <li>
+          <Link href={isLogin ? '/profile' : '/login'}>
+            <a className="text-white text-xl tracking-wider">{isLogin ? 'Profile' : 'Login'}</a>
+          </Link>
+        </li>
+      </Drawer>
       <section className="w-full bg-purple pt-20 pb-32">
-        <nav className="max-w-screen-lg mx-auto flex justify-between items-center">
+        <nav className="lg:max-w-screen-lg max-w-3/4 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center">
           <Link href="/">
             <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>
           </Link>
-          <ul className="flex flex-row">
+          <ul className="lg:flex flex-row hidden">
             {/* <li>
               <Link href="/about">
                 <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
@@ -61,11 +71,16 @@ const Home: NextPage = () => {
               </Link>
             </li>
           </ul>
+          <div className="lg:hidden flex">
+            <span className="cursor-pointer pb-6" onClick={() => setIsMenuOpen(true)}>
+              <Menu size={36} color="#fff" />
+            </span>
+          </div>
         </nav>
-        <div className="max-w-screen-lg mx-auto flex justify-between items-center pt-24">
-          <div className="max-w-1/2">
+        <div className="lg:max-w-screen-lg max-w-3/4 mx-auto flex justify-between items-center lg:pt-24 pt-12 lg:flex-row flex-col">
+          <div className="lg:max-w-1/2 max-w-none">
             <Fade up duration={600} delay={300}>
-              <h1 className="text-white font-bold text-5xl pb-5 leading-tight">
+              <h1 className="text-white font-bold lg:text-5xl text-4xl pb-5 leading-tight">
                 Keep Your Items
                 <br />
                 As Long As You Need
@@ -77,13 +92,15 @@ const Home: NextPage = () => {
                 time and distance possible
               </h2>
             </Fade>
-            <Link href={`/dropzones${positionQuery}`}>
-              <a>
-                <Zoom duration={600} delay={1400}>
-                  <Button>Explore nearby spots</Button>
-                </Zoom>
-              </a>
-            </Link>
+            <div className="lg:block lg:pb-0 pb-12 flex flex-col">
+              <Link href={`/dropzones${positionQuery}`}>
+                <a>
+                  <Zoom duration={600} delay={1400}>
+                    <Button className="lg:w-auto w-full">Explore nearby spots</Button>
+                  </Zoom>
+                </a>
+              </Link>
+            </div>
           </div>
           <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
             <Image src="/home/deliveries.svg" alt="delivery" width={520} height={400} />

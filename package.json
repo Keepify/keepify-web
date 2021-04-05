@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@reach/portal": "^0.14.0",
     "@react-google-maps/api": "^1.9.12",
     "axios": "^0.21.1",
     "framer-motion": "^2.9.5",

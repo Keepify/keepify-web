@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import memo from 'helpers/memo';
 import { motion } from 'framer-motion';
 
 const Button: React.FC<React.HTMLProps<HTMLButtonElement>> = ({ children, className }) => {
