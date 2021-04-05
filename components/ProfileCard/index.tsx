@@ -22,7 +22,7 @@ const ProfileCard: React.FC<Props> = (props) => (
       style={{ background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.55))' }}
     >
       <img
-        className="w-80 h-48 object-cover absolute"
+        className="w-full h-48 object-cover absolute"
         style={{ zIndex: -1 }}
         src={props.img}
         alt="transaction-img"

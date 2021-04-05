@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import { PageContext } from 'types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Edit2, PlusCircle } from 'react-feather';
+import { Edit2, Menu, PlusCircle } from 'react-feather';
 import ProfileCard from 'components/ProfileCard';
 import Modal from 'components/Modal';
 import { useEffect, useState } from 'react';
@@ -27,6 +27,7 @@ import { DropzoneListItem } from 'types/dropzone';
 import { getAllDropzones } from 'services/dropzone';
 import nextCookie from 'next-cookies';
 import setAuthToken from 'helpers/token';
+import Drawer from 'components/Drawer';
 
 type EditProfileFields = {
   firstName: string;
@@ -46,6 +47,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useFormError(errors);
 
@@ -105,8 +107,31 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
   if (!userInfo) return null;
 
   return (
-    <div className="relative">
+    <article className="relative">
       {isLoading && <Loader />}
+      <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+        <li className="pb-4">
+          {userInfo.role === '1' ? (
+            <Link href="/dropzones">
+              <a className="text-white text-xl tracking-wider">Dropzones</a>
+            </Link>
+          ) : (
+            <a
+              className="text-white text-xl tracking-wider"
+              href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Become a Host
+            </a>
+          )}
+        </li>
+        <li className="pb-4">
+          <Link href={`/?logout=${+new Date()}`}>
+            <a className="text-white text-xl tracking-wider">Logout</a>
+          </Link>
+        </li>
+      </Drawer>
       <Modal isOpen={isModalOpen}>
         <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 w-160 p-8 relative flex overflow-hidden">
           <span
@@ -185,11 +210,11 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
       </Modal>
       <header>
         <div className="w-full absolute z-10 top-0">
-          <nav className="max-w-screen-lg mx-auto flex justify-between items-center pt-20">
+          <nav className="lg:max-w-screen-lg max-w-3/4 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center pt-20">
             <Link href="/">
               <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>
             </Link>
-            <ul className="flex flex-row">
+            <ul className="lg:flex flex-row hidden">
               <li>
                 {userInfo.role === '1' ? (
                   <Link href="/dropzones">
@@ -216,6 +241,11 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                 </Link>
               </li>
             </ul>
+            <div className="lg:hidden flex">
+              <span className="cursor-pointer pb-6" onClick={() => setIsMenuOpen(true)}>
+                <Menu size={36} color="#fff" />
+              </span>
+            </div>
           </nav>
         </div>
         <div className="w-full h-96 relative">
@@ -228,7 +258,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
         </div>
       </header>
       <div className="relative w-full">
-        <div className="max-w-screen-lg mx-auto">
+        <div className="lg:max-w-screen-lg max-w-3/4 mx-auto">
           <label
             htmlFor="profile-img"
             className="absolute w-32 h-32 -top-16 bg-orange-light bg-opacity-40 rounded-full flex justify-center items-center"
@@ -252,13 +282,15 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
           <div className="pb-28 pt-32">
             <section className="pb-20">
               <div className="flex justify-between items-center pb-5">
-                <h2 className="text-orange text-2xl tracking-widest">Personal Information</h2>
-                <a className="flex items-center cursor-pointer">
+                <h2 className="text-orange lg:text-2xl text-xl tracking-widest">
+                  Personal Information
+                </h2>
+                <a
+                  className="flex items-center cursor-pointer"
+                  onClick={() => setIsModalOpen(true)}
+                >
                   <Edit2 size={18} color="#FF8E6E" />
-                  <p
-                    className="text-orange text-lg pl-4 tracking-wide cursor-pointer"
-                    onClick={() => setIsModalOpen(true)}
-                  >
+                  <p className="text-orange text-lg pl-4 tracking-wide cursor-pointer lg:block hidden">
                     Edit
                   </p>
                 </a>
@@ -267,19 +299,19 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
               <span style={{ height: 1 }} className="flex mb-8 w-24 bg-purple bg-opacity-30" />
 
               <div className="flex flex-wrap -mx-4">
-                <div className="mx-4 my-4 w-1/4">
+                <div className="m-4 lg:w-1/4 w-full">
                   <div className="flex flex-col">
                     <label className="text-purple">First Name</label>
                     <p className="text-xl">{userInfo.fname}</p>
                   </div>
                 </div>
-                <div className="my-4 w-1/4">
+                <div className="m-4 lg:w-1/4 w-full">
                   <div className="flex flex-col">
                     <label className="text-purple">Last Name</label>
                     <p className="text-xl">{userInfo.lname}</p>
                   </div>
                 </div>
-                <div className="my-4 w-1/4">
+                <div className="m-4 lg:w-1/4 w-full">
                   <div className="flex flex-col">
                     <label className="text-purple">Email Address</label>
                     <p className="text-xl">{userInfo.email}</p>
@@ -294,7 +326,9 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             {userInfo.role === '1' && currentTransactions?.length && (
               <section className="pb-20">
                 <div className="flex justify-between items-center pb-5">
-                  <h2 className="text-orange text-2xl tracking-widest">Current Transactions</h2>
+                  <h2 className="text-orange lg:text-2xl text-xl  tracking-widest">
+                    Current Transactions
+                  </h2>
                 </div>
 
                 <span style={{ height: 1 }} className="flex mb-8 w-24 bg-purple bg-opacity-30" />
@@ -322,7 +356,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             )}
             <section className="pb-20">
               <div className="flex justify-between items-center pb-5">
-                <h2 className="text-orange text-2xl tracking-widest">Past Keeps</h2>
+                <h2 className="text-orange lg:text-2xl text-xl  tracking-widest">Past Keeps</h2>
               </div>
 
               <span style={{ height: 1 }} className="flex mb-8 w-24 bg-purple bg-opacity-30" />
@@ -365,7 +399,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             {userInfo.role === '1' && (
               <section>
                 <div className="flex justify-between items-center pb-5">
-                  <h2 className="text-orange text-2xl tracking-widest">My Storages</h2>
+                  <h2 className="text-orange lg:text-2xl text-xl  tracking-widest">My Storages</h2>
                   <a
                     className="flex items-center"
                     href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
@@ -373,7 +407,9 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                     rel="noreferrer"
                   >
                     <PlusCircle size={18} color="#FF8E6E" />
-                    <p className="text-orange text-lg pl-4 tracking-wide">Apply New Storage</p>
+                    <p className="text-orange text-lg pl-4 tracking-wide  lg:block hidden">
+                      Apply New Storage
+                    </p>
                   </a>
                 </div>
 
@@ -400,7 +436,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

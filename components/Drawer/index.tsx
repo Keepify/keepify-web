@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import memo from 'helpers/memo';
 import Portal from '@reach/portal';
 import { X } from 'react-feather';
@@ -6,7 +6,7 @@ import { X } from 'react-feather';
 type Props = {
   show?: boolean;
   onClose?: () => void;
-  children?: JSX.Element;
+  children?: ReactNode;
 };
 
 const Drawer: React.FC<Props> = ({ show, children, onClose }) => {

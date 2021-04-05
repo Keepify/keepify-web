@@ -16,7 +16,7 @@ import Drawer from 'components/Drawer';
 
 const Home: NextPage = () => {
   const [position, setPosition] = useState<LatLng>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLogin } = useUserInfo();
   const Router = useRouter();
 
@@ -42,9 +42,9 @@ const Home: NextPage = () => {
   }, [position]);
 
   return (
-    <div>
+    <article>
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
-        <li>
+        <li className="pb-4">
           <Link href={isLogin ? '/profile' : '/login'}>
             <a className="text-white text-xl tracking-wider">{isLogin ? 'Profile' : 'Login'}</a>
           </Link>
@@ -107,7 +107,7 @@ const Home: NextPage = () => {
           </motion.div>
         </div>
       </section>
-    </div>
+    </article>
   );
 };
 
