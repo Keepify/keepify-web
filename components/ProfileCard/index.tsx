@@ -16,13 +16,15 @@ const ProfileCard: React.FC<Props> = (props) => (
     transition={{ duration: 0.3 }}
     className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3 h-48 cursor-pointer"
     href={props.href ?? '#'}
+    target="_blank"
+    rel="noreferrer"
   >
     <article
       className="overflow-hidden rounded-lg shadow-lg relative w-full h-full"
       style={{ background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.55))' }}
     >
       <img
-        className="w-full h-48 object-cover absolute"
+        className="w-80 h-48 object-cover absolute"
         style={{ zIndex: -1 }}
         src={props.img}
         alt="transaction-img"

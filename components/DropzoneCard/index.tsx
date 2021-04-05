@@ -16,7 +16,7 @@ const DropzoneCard = (props: Props) => (
     <Link href={`/dropzone/${props.id}`}>
       <a>
         <article className="overflow-hidden rounded-lg shadow-lg">
-          <img alt="Placeholder" className="block h-40 w-full" src={props.thumbnail} />
+          <img alt="Placeholder" className="block h-40 w-full object-cover" src={props.thumbnail} />
           <header className="flex items-center justify-between leading-tight p-2 md:p-4">
             <h1 className="text-lg">
               <span className="no-underline text-black">{props.name}</span>

@@ -17,7 +17,7 @@ import Image from 'next/image';
 
 export default function Dropzones() {
   const { query } = useRouter();
-  const { isLogin } = useUserInfo();
+  const { isLogin, userInfo } = useUserInfo();
   const [currentLocation, setCurrentLocation] = useState<LatLng>({
     latitude: query.lat ? Number(query.lat) : 0,
     longitude: query.lng ? Number(query.lng) : 0,
@@ -127,18 +127,20 @@ export default function Dropzones() {
             <a className="text-orange-light text-xl tracking-widest font-bold">Keepify</a>
           </Link>
           <ul className="flex flex-row">
-            <li>
-              <Link href="/about">
-                <a
-                  className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
-                  href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Become a Host
-                </a>
-              </Link>
-            </li>
+            {userInfo?.role !== '1' && (
+              <li>
+                <Link href="/about">
+                  <a
+                    className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
+                    href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Become a Host
+                  </a>
+                </Link>
+              </li>
+            )}
             <li>
               <Link href={isLogin ? '/profile' : '/login'}>
                 <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
@@ -150,8 +152,8 @@ export default function Dropzones() {
         </div>
       </nav>
       <div className="flex dropzone-container">
-        <div className="w-3/5 overflow-y-auto bg-full-white py-12 px-7">
-          <div className="pb-12 w-72">
+        <div className="lg:w-3/5 w-full overflow-y-auto bg-full-white py-12 px-7">
+          <div className="pb-12 lg:w-72 w-full">
             <Input
               containerClassName="bg-light-purple rounded-xl"
               className="bg-light-purple"
@@ -167,7 +169,7 @@ export default function Dropzones() {
             />
           </div>
           <h2 className="text-black font-bold text-2xl pb-4">Nearby Storages</h2>
-          <div className="container mx-auto">
+          <div>
             {!dropzoneList.length && !isLoading && (
               <div className="w-full p-12 shadow-2xl rounded-xl flex flex-col items-center justify-center">
                 <span className="w-32">
@@ -205,7 +207,7 @@ export default function Dropzones() {
             </div>
           </div>
         </div>
-        <div className="w-2/5 mr-auto">
+        <div className="w-2/5 mr-auto lg:block hidden">
           <ReactMapGL
             {...viewPort}
             width="100%"
