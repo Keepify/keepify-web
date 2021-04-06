@@ -55,15 +55,15 @@ const Signup: NextPage = () => {
   return (
     <div className="flex justify-between">
       {isLoading && <Loader />}
-      <div className="w-1/2 min-h-screen relative">
+      <div className="w-1/2 min-h-screen relative lg:block hidden">
         <Image className="object-cover" src="/sign/sign.png" layout="fill" alt="bg" />
       </div>
-      <div className="w-1/2 bg-purple overflow-auto min-h-screen py-20 px-24">
+      <div className="lg:w-1/2 w-full bg-purple overflow-auto min-h-screen py-20 lg:px-24 px-10">
         <Link href="/">
           <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>
         </Link>
 
-        <h1 className="text-white font-bold text-5xl pt-14 pb-5 leading-tight">
+        <h1 className="text-white font-bold lg:text-5xl text-4xl pt-14 pb-5 leading-tight">
           Create New Account
         </h1>
         <span className="text-grey text-sm">
