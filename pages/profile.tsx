@@ -133,7 +133,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
         </li>
       </Drawer>
       <Modal isOpen={isModalOpen}>
-        <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 w-160 p-8 relative flex overflow-hidden">
+        <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 lg:w-160 w-full p-8 relative flex overflow-hidden">
           <span
             className="absolute top-8 right-8 cursor-pointer"
             onClick={() => setIsModalOpen(false)}

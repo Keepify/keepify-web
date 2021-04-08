@@ -46,7 +46,10 @@ const Modal: React.FC<Props> = ({ onClose, overlayBackgroundColor, children, isO
             exit={'exit'}
             variants={modalVariant}
           >
-            <div className="flex justify-center items-center" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="flex justify-center items-center w-max"
+              onClick={(e) => e.stopPropagation()}
+            >
               {children}
             </div>
           </motion.div>

@@ -88,7 +88,7 @@ const Signup: NextPage = () => {
                     <User size={16} color="#7E7E7E" />
                   </span>
                 }
-                placeholder="Your first name"
+                placeholder="First name"
                 ref={register({
                   required: 'Please provide your first name!',
                 })}
@@ -105,7 +105,7 @@ const Signup: NextPage = () => {
                     <User size={16} color="#7E7E7E" />
                   </span>
                 }
-                placeholder="Your last name"
+                placeholder="Last name"
                 ref={register({
                   required: 'Please provide your last name!',
                 })}
