@@ -13,6 +13,11 @@ export interface RootState {
     userInfo: User;
     isLogin: boolean;
   };
+  order: {
+    startTime: string;
+    endTime: string;
+    items: number;
+  };
 }
 
 export type LatLng = {

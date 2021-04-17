@@ -40,7 +40,7 @@ export async function getDropzone(id: string) {
 export async function getHostDropzones(id: string) {
   try {
     const { data } = await axios.get<{ dropzones: DropzoneListItem[] }>(
-      `${API_DOMAIN}/users/${id}/dropzones/`
+      `${API_DOMAIN}/users/${id}/dropzones`
     );
 
     return data.dropzones;

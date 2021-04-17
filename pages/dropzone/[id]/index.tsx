@@ -1,12 +1,11 @@
 import { NextPage, NextPageContext } from 'next';
 import { DropzoneListItem } from 'types/dropzone';
 import Link from 'next/link';
-import { getLocationByCode } from 'services/map';
 import ReactMapGL, { ViewportProps, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Pin from 'public/dropzone/pin';
-import { useRef, useState } from 'react';
-import { Archive, Briefcase, Star, Plus, Minus } from 'react-feather';
+import { useMemo, useRef, useState } from 'react';
+import { Archive, Briefcase, Star, Plus, Minus, Menu } from 'react-feather';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import Button from 'components/Button';
@@ -14,10 +13,15 @@ import { motion } from 'framer-motion';
 import { getDropzone } from 'services/dropzone';
 import { useUserInfo } from 'hooks/redux';
 import { useRouter } from 'next/router';
+import Drawer from 'components/Drawer';
+import { useDispatch } from 'react-redux';
+import { setEndTime, setItems, setStartTime } from 'actions/order';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   const { query } = useRouter();
   const { isLogin } = useUserInfo();
+  const dispatch = useDispatch();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [viewPort, setViewPort] = useState<ViewportProps>({
     latitude: details.location.lat,
     longitude: details.location.lng,
@@ -27,6 +31,10 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   const [to, setTo] = useState(null);
   const [itemsNum, setItemsNum] = useState(1);
   const toRef = useRef(null);
+
+  const canBook = useMemo(() => {
+    return !!from && !!to && !!itemsNum;
+  }, [from, to, itemsNum]);
 
   function decreaseNum() {
     if (itemsNum > 1) {
@@ -40,14 +48,34 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
     }
   }
 
+  function book() {
+    dispatch(setStartTime(from));
+    dispatch(setEndTime(to));
+    dispatch(setItems(itemsNum));
+  }
+
   return (
-    <div>
-      <nav className="w-full bg-purple shadow-xl relative">
-        <div className="max-w-screen-lg my-0 h-20 mx-auto flex justify-between items-center">
+    <article>
+      <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+        <li className="pb-4">
           <Link href="/">
             <a className="text-orange-light text-xl tracking-widest font-bold">Keepify</a>
           </Link>
-          <ul className="flex flex-row">
+        </li>
+        <li className="pb-4">
+          <Link href={isLogin ? '/profile' : '/login'}>
+            <a className="text-white text-xl tracking-wider">{isLogin ? 'Profile' : 'Login'}</a>
+          </Link>
+        </li>
+      </Drawer>
+      <nav className="w-full bg-purple shadow-xl relative">
+        <div className="lg:max-w-screen-lg max-w-3/4 my-0 h-20 mx-auto flex justify-between items-center">
+          <Link href="/">
+            <a className="text-orange-light text-xl tracking-widest font-bold lg:inline hidden">
+              Keepify
+            </a>
+          </Link>
+          <ul className="lg:flex flex-row hidden">
             <li>
               <Link href="/about">
                 <a
@@ -68,6 +96,11 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
               </Link>
             </li>
           </ul>
+          <div className="lg:hidden flex">
+            <span className="cursor-pointer" onClick={() => setIsMenuOpen(true)}>
+              <Menu size={36} color="#fff" />
+            </span>
+          </div>
         </div>
       </nav>
       <div className="w-full">
@@ -179,11 +212,11 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
               <Link
                 href={
                   isLogin
-                    ? `/dropzone/${query.id}`
-                    : `/login?r=${encodeURIComponent(`/dropzone/${query.id}`)}`
+                    ? `/dropzone/${query.id}/book`
+                    : `/login?r=${encodeURIComponent(`/dropzone/${query.id}/book`)}`
                 }
               >
-                <a>
+                <a className={`pointer-events-${canBook ? 'auto' : 'none'}`} onClick={book}>
                   <Button className="w-full">Book Now</Button>
                 </a>
               </Link>
@@ -213,7 +246,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           </ReactMapGL>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
