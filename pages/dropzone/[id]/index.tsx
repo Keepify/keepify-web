@@ -49,9 +49,15 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   }
 
   function book() {
+    const order = {
+      from,
+      to,
+      itemsNum,
+    };
     dispatch(setStartTime(from));
     dispatch(setEndTime(to));
     dispatch(setItems(itemsNum));
+    sessionStorage.setItem('orderInfo', JSON.stringify(order));
   }
 
   return (

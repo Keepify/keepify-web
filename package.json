@@ -10,6 +10,8 @@
   "dependencies": {
     "@reach/portal": "^0.14.0",
     "@react-google-maps/api": "^1.9.12",
+    "@stripe/react-stripe-js": "^1.4.0",
+    "@stripe/stripe-js": "^1.13.2",
     "axios": "^0.21.1",
     "framer-motion": "^2.9.5",
     "js-cookie": "^2.2.1",
