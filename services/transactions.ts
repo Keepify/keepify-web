@@ -29,3 +29,16 @@ export async function getTransaction(id: string) {
     throw e;
   }
 }
+
+export async function updateTransactionStatus(transaction: Transaction) {
+  try {
+    const { data } = await axios.put<{ transaction: Transaction }>(
+      `${API_DOMAIN}/transactions/${transaction.id}`,
+      transaction
+    );
+
+    return data.transaction;
+  } catch (e) {
+    throw e;
+  }
+}

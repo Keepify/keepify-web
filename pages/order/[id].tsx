@@ -5,20 +5,58 @@ import Link from 'next/link';
 import ReactMapGL, { ViewportProps, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Pin from 'public/dropzone/pin';
-import { getTransaction } from 'services/transactions';
-import { Transaction } from 'types/transaction';
+import { getTransaction, updateTransactionStatus } from 'services/transactions';
+import { Transaction, TStatus } from 'types/transaction';
 import moment from 'moment';
 import { useState } from 'react';
 import { Star, Mail } from 'react-feather';
+import { useUserInfo } from 'hooks/redux';
+import Button from 'components/Button';
+import { errorNotification } from 'helpers/notification';
+import Loader from 'components/Loader';
+import { capitalize } from 'helpers/string';
+import QRCode from 'qrcode.react';
+import Image from 'next/image';
 
 const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
+  const { userInfo } = useUserInfo();
   const [viewPort, setViewPort] = useState<ViewportProps>({
     latitude: transaction.dropzone.location.lat,
     longitude: transaction.dropzone.location.lng,
     zoom: 12,
   } as ViewportProps);
+  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<TStatus>(transaction.status);
+
+  console.log({ transaction });
+
+  async function switchStatus() {
+    try {
+      setIsLoading(true);
+
+      switch (status) {
+        case TStatus.PAID:
+          await updateTransactionStatus({ ...transaction, status: TStatus.CONFIRMED });
+          setStatus(TStatus.CONFIRMED);
+          break;
+        case TStatus.CONFIRMED:
+          await updateTransactionStatus({ ...transaction, status: TStatus.RECEIVED });
+          setStatus(TStatus.RECEIVED);
+          break;
+        default:
+          await updateTransactionStatus({ ...transaction, status: TStatus.CONFIRMED });
+          setStatus(TStatus.CONFIRMED);
+      }
+      setIsLoading(false);
+    } catch (e) {
+      setIsLoading(false);
+      errorNotification('Error', 'An error occurred. Please try again later.');
+    }
+  }
+
   return (
     <div className="bg-silver pt-8 pb-12 min-h-screen w-full">
+      {isLoading && <Loader />}
       <Link href="/">
         <a>
           <nav className="text-center text-orange-light text-lg tracking-widest font-bold">
@@ -29,13 +67,27 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
       <main className="pt-10 max-w-screen-lg mx-auto">
         <header className="bg-full-white py-4 px-6 flex justify-between items-center rounded-md">
           <h2 className="text-xl font-bold">Order: {transaction.id.split('-')[4]}</h2>
-          <span className="bg-green text-white w-32 py-2 rounded-full text-center">
-            {transaction.status}
+          <span className="bg-green text-white px-6 py-3 rounded-full text-center">
+            {capitalize(status)}
           </span>
         </header>
 
         <div className="mt-8 flex items-start">
-          <article className="w-3/5 mr-8 py-6 px-6 bg-full-white rounded-md">
+          <article className="w-3/5 mr-8 py-6 px-10 bg-full-white rounded-md">
+            {[TStatus.PAID, TStatus.CONFIRMED].includes(status) && (
+              <>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="tracking-wider text-lg">
+                    {status === TStatus.PAID ? 'Accept this order?' : 'Received order item(s)?'}
+                  </label>
+                  <Button className="bg-green text-white rounded-full" onClick={switchStatus}>
+                    Confirm
+                  </Button>
+                </div>
+                <hr className="w-full h-0.5 my-4 bg-white opacity-20" />
+              </>
+            )}
+
             <div className="mb-4 flex justify-between items-center">
               <label className="tracking-wider text-lg">Order Total</label>
               <label className="tracking-wider text-xl font-bold">${transaction.cost} USD</label>
@@ -61,6 +113,25 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
             <p className="tracking-wider text-sm">
               I will be bringing 2 luggages that each weight 20kgs, please keep them carefully!
             </p> */}
+            {status === TStatus.RECEIVED && (
+              <>
+                <div className="my-4">
+                  <label className="tracking-wider text-lg">Client Redeem Code</label>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <QRCode size={200} value={transaction.host_token} />
+                  </div>
+                  <div className="flex flex-col items-center ml-8">
+                    <Image src="/order/scan_redeem.svg" width={250} height={180} alt="scan_qr" />
+                    <p className="text-dark tracking-widest text-center mt-3">
+                      Please show this QR code to the client when redeeming back the kept item(s) in
+                      order to close the order!
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </article>
           <aside className="w-2/5 bg-full-white rounded-md overflow-hidden">
             <div className="w-full">

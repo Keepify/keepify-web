@@ -36,8 +36,10 @@ type EditProfileFields = {
 };
 
 const tagColor = {
-  CREATED: 'bg-green',
-  COMPLETED: 'bg-purple',
+  PAID: 'bg-green',
+  CONFIRMED: 'bg-green',
+  RECEIVED: 'bg-purple',
+  REDEEMED: 'bg-purple',
 };
 
 const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions }) => {

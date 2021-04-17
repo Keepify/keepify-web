@@ -9,13 +9,13 @@ export type Transaction = {
   id: string;
   reservation_end: string;
   reservation_start: string;
-  status: string;
+  status: TStatus;
   user: User;
 };
 
 export enum TStatus {
-  'PAID',
-  'CONFIRMED',
-  'RECEIVED',
-  'REDEEMED',
+  PAID = 'PAID',
+  CONFIRMED = 'CONFIRMED',
+  RECEIVED = 'RECEIVED',
+  REDEEMED = 'REDEEMED',
 }
