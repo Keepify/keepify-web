@@ -48,6 +48,8 @@ export async function getLocationByCode({ latitude, longitude }: LatLng) {
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
     );
 
+    console.log({ data });
+
     const [, ...result] = data.plus_code.compound_code.split(' ');
 
     return result;

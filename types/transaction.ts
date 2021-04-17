@@ -12,3 +12,10 @@ export type Transaction = {
   status: string;
   user: User;
 };
+
+export enum TStatus {
+  'PAID',
+  'CONFIRMED',
+  'RECEIVED',
+  'REDEEMED',
+}

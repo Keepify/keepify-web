@@ -36,3 +36,15 @@ export async function getDropzone(id: string) {
     throw e;
   }
 }
+
+export async function getHostDropzones(id: string) {
+  try {
+    const { data } = await axios.get<{ dropzones: DropzoneListItem[] }>(
+      `${API_DOMAIN}/users/${id}/dropzones/`
+    );
+
+    return data.dropzones;
+  } catch (e) {
+    throw e;
+  }
+}

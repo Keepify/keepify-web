@@ -24,7 +24,7 @@ import { getTransaction, getTransactions } from 'services/transactions';
 import { Transaction } from 'types/transaction';
 import moment from 'moment';
 import { DropzoneListItem } from 'types/dropzone';
-import { getAllDropzones } from 'services/dropzone';
+import { getAllDropzones, getHostDropzones } from 'services/dropzone';
 import nextCookie from 'next-cookies';
 import setAuthToken from 'helpers/token';
 import Drawer from 'components/Drawer';
@@ -462,7 +462,7 @@ Profile.getInitialProps = async (ctx: PageContext) => {
 
     // if the user is a host, get dropzones
     if (userInfo.role === '1') {
-      const dropzones = await getAllDropzones();
+      const dropzones = await getHostDropzones(userInfo.id);
       const currentTransactions = await getTransactions({ status: 'CREATED' });
 
       return {

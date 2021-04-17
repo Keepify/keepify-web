@@ -40,7 +40,11 @@ const Login: NextPage = () => {
       dispatch(setUserInfo(user));
 
       setIsLoading(false);
-      Router.push('/profile');
+
+      const { r } = Router.query;
+
+      // if any redirection link exist, redirect to the specified page instead
+      Router.push(r ? decodeURIComponent(r as string) : '/profile');
     } catch (e) {
       if (e?.response?.data?.message) {
         errorNotification('Error', e.response.data.message);

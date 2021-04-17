@@ -13,8 +13,10 @@ import Button from 'components/Button';
 import { motion } from 'framer-motion';
 import { getDropzone } from 'services/dropzone';
 import { useUserInfo } from 'hooks/redux';
+import { useRouter } from 'next/router';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
+  const { query } = useRouter();
   const { isLogin } = useUserInfo();
   const [viewPort, setViewPort] = useState<ViewportProps>({
     latitude: details.location.lat,
@@ -82,7 +84,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </div>
           </div>
           <h3 className="text-md text-grey pt-2">{location}</h3>
-          <hr className="w-full h-0.5 mt-8 bg-white opacity-20 pb-10" />
+          <hr className="w-full h-0.5 mt-4 bg-white opacity-20 mb-10" />
 
           <h2 className="text-2xl pb-4">Services Available</h2>
           <div className="flex flex-wrap -mx-1 lg:-mx-4">
@@ -174,7 +176,17 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </div>
 
             <div className="pt-8">
-              <Button className="w-full">Book Now</Button>
+              <Link
+                href={
+                  isLogin
+                    ? `/dropzone/${query.id}`
+                    : `/login?r=${encodeURIComponent(`/dropzone/${query.id}`)}`
+                }
+              >
+                <a>
+                  <Button className="w-full">Book Now</Button>
+                </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -220,7 +232,7 @@ DropzoneDetails.getInitialProps = async (ctx: NextPageContext) => {
 
   return {
     details: dropzone,
-    location: 'Çankaya/Ankara, Turkey', // `${location[0]} ${location[1]}`,
+    location: '', // `${location[0]} ${location[1]}`,
   };
 };
 
