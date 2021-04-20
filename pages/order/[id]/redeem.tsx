@@ -24,6 +24,14 @@ const RedeemPage = () => {
             The item has been successfully redeemed. Thank you for using Keepify!
           </p>
         </div>
+
+        {/* <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">
+          <Image src="/order/redeem_error.svg" width={250} height={250} alt="redeem_illustration" />
+          <h3 className="mt-8 tracking-wider text-xl text-red">Failure!</h3>
+          <p className="mt-4 text-dark tracking-wider text-center">
+            The transaction has either been previously redeemed or you do not own this item.
+          </p>
+        </div> */}
       </div>
     </article>
   );
