@@ -58,7 +58,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
   const [isCardNumberComplete, setisCardNumberComplete] = useState(false);
   const [isExpiredDateComplete, setIsExpiredDateComplete] = useState(false);
   const [isCVCComplete, setIsCVCComplete] = useState(false);
-  const [isPaymentComplete, setIsPaymentComplete] = useState(true);
+  const [isPaymentComplete, setIsPaymentComplete] = useState(false);
 
   const isCardInfoComplete = useMemo(() => {
     return isCardNumberComplete && isExpiredDateComplete && isCVCComplete;
@@ -219,7 +219,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
                 </div>
               </div>
 
-              <div className="pb-6 flex justify-between">
+              <div className="pb-8 flex justify-between">
                 <div className="w-1/2 pr-2">
                   <label className="text-dark text-sm mb-2">Expiration Date</label>
                   <div className="mt-2">
@@ -239,6 +239,12 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
                   </div>
                 </div>
               </div>
+
+              <h2 className="text-xl font-bold mb-4">Additional Notes (optional)</h2>
+              <textarea
+                className="w-full bg-full-white p-3 rounded-md shadow-xl resize-none"
+                rows={4}
+              />
 
               <div>
                 <Button
