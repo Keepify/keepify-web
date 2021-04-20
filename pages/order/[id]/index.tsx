@@ -29,8 +29,8 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
   } as ViewportProps);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<TStatus>(transaction.status);
-
-  console.log({ transaction });
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
 
   async function switchStatus() {
     try {
@@ -76,67 +76,117 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
           </header>
 
           <div className="mt-8 flex items-start">
-            <article className="w-3/5 mr-8 py-6 px-10 bg-full-white rounded-md">
-              {[TStatus.PAID, TStatus.CONFIRMED].includes(status) && (
-                <>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="tracking-wider text-lg">
-                      {status === TStatus.PAID ? 'Accept this order?' : 'Received order item(s)?'}
-                    </label>
-                    <Button className="bg-green text-white rounded-full" onClick={switchStatus}>
-                      Confirm
-                    </Button>
-                  </div>
-                  <hr className="w-full h-0.5 my-4 bg-white opacity-20" />
-                </>
-              )}
+            <article className="w-3/5 mr-8">
+              <div className="bg-full-white rounded-md py-6 px-10">
+                {[TStatus.PAID, TStatus.CONFIRMED].includes(status) && (
+                  <>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="tracking-wider text-lg">
+                        {status === TStatus.PAID ? 'Accept this order?' : 'Received order item(s)?'}
+                      </label>
+                      <Button className="bg-green text-white rounded-full" onClick={switchStatus}>
+                        Confirm
+                      </Button>
+                    </div>
+                    <hr className="w-full h-0.5 my-4 bg-white opacity-20" />
+                  </>
+                )}
 
-              <div className="mb-4 flex justify-between items-center">
-                <label className="tracking-wider text-lg">Order Total</label>
-                <label className="tracking-wider text-xl font-bold">${transaction.cost} USD</label>
-              </div>
-              <div className="mb-2 flex justify-between items-center">
-                <label className="tracking-wider text-lg">Reservation Period</label>
-              </div>
-              <div className="mb-1 flex justify-between items-center">
-                <label className="tracking-widest text-orange text-sm">Starting Time</label>
-                <label className="tracking-widest text-sm">
-                  {moment(transaction.reservation_start).format('YYYY/MM/DD H:mm A')}
-                </label>
-              </div>
-              <div className="mb-4 flex justify-between items-center">
-                <label className="tracking-widest text-orange text-sm">Ending Time</label>
-                <label className="tracking-widest text-sm">
-                  {moment(transaction.reservation_end).format('YYYY/MM/DD H:mm A')}
-                </label>
-              </div>
-              {/* <div className="mb-4 flex justify-between items-center">
+                <div className="mb-4 flex justify-between items-center">
+                  <label className="tracking-wider text-lg">Order Total</label>
+                  <label className="tracking-wider text-xl font-bold">
+                    ${transaction.cost} USD
+                  </label>
+                </div>
+                <div className="mb-2 flex justify-between items-center">
+                  <label className="tracking-wider text-lg">Reservation Period</label>
+                </div>
+                <div className="mb-1 flex justify-between items-center">
+                  <label className="tracking-widest text-orange text-sm">Starting Time</label>
+                  <label className="tracking-widest text-sm">
+                    {moment(transaction.reservation_start).format('YYYY/MM/DD H:mm A')}
+                  </label>
+                </div>
+                <div className="mb-4 flex justify-between items-center">
+                  <label className="tracking-widest text-orange text-sm">Ending Time</label>
+                  <label className="tracking-widest text-sm">
+                    {moment(transaction.reservation_end).format('YYYY/MM/DD H:mm A')}
+                  </label>
+                </div>
+                {/* <div className="mb-4 flex justify-between items-center">
               <label className="tracking-wider text-lg">Client Notes</label>
             </div>
             <p className="tracking-wider text-sm">
               I will be bringing 2 luggages that each weight 20kgs, please keep them carefully!
             </p> */}
-              {status === TStatus.RECEIVED && (
-                <>
-                  <div className="my-4">
-                    <label className="tracking-wider text-lg">Client Redeem Code</label>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <QRCode
-                        size={200}
-                        value={`https://keepify.vercel.app/order/${query.id}?token=${transaction.host_token}`}
-                      />
+                {status === TStatus.RECEIVED && (
+                  <>
+                    <div className="my-4">
+                      <label className="tracking-wider text-lg">Client Redeem Code</label>
                     </div>
-                    <div className="flex flex-col items-center ml-8">
-                      <Image src="/order/scan_redeem.svg" width={250} height={180} alt="scan_qr" />
-                      <p className="text-dark tracking-widest text-center mt-3">
-                        Please show this QR code to the client when redeeming back the kept item(s)
-                        in order to close the order!
-                      </p>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <QRCode
+                          size={200}
+                          value={`https://keepify.vercel.app/order/${query.id}?token=${transaction.host_token}`}
+                        />
+                      </div>
+                      <div className="flex flex-col items-center ml-8">
+                        <Image
+                          src="/order/scan_redeem.svg"
+                          width={250}
+                          height={180}
+                          alt="scan_qr"
+                        />
+                        <p className="text-dark tracking-widest text-center mt-3">
+                          Please show this QR code to the client when redeeming back the kept
+                          item(s) in order to close the order!
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              {status === TStatus.REDEEMED && (
+                <div className="bg-full-white rounded-md py-6 px-10 mt-5">
+                  <label className="tracking-wider text-lg block mb-4">Review</label>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="tracking-widest text-sm">
+                      How was the overall experience?
+                    </label>
+                    <div className="flex" onMouseLeave={() => setHoverRating(0)}>
+                      {[...Array(5)].map((x, i) => (
+                        <Star
+                          key={i}
+                          className="ml-1"
+                          color={
+                            rating > 0 && i < rating
+                              ? '#FF8E6E'
+                              : hoverRating > 0 && i < hoverRating
+                              ? '#FFBB9E'
+                              : '#7E7E7E'
+                          }
+                          fill={
+                            rating > 0 && i < rating
+                              ? '#FF8E6E'
+                              : hoverRating > 0 && i < hoverRating
+                              ? '#FFBB9E'
+                              : '#fff'
+                          }
+                          size={16}
+                          onMouseEnter={() => setHoverRating(i + 1)}
+                          onClick={() => setRating(i + 1)}
+                        />
+                      ))}
                     </div>
                   </div>
-                </>
+
+                  <label className="tracking-widest text-sm block mb-4">
+                    Do you have any feedback for us or for the host? (optional)
+                  </label>
+
+                  <textarea className="w-full bg-white p-3 rounded-md resize-none" rows={4} />
+                </div>
               )}
             </article>
             <aside className="w-2/5 bg-full-white rounded-md overflow-hidden">
