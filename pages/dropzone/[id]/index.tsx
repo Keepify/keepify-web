@@ -18,8 +18,9 @@ import { useDispatch } from 'react-redux';
 import { setEndTime, setItems, setStartTime } from 'actions/order';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
-  const { query } = useRouter();
-  const { isLogin } = useUserInfo();
+  const Router = useRouter();
+  const { query } = Router;
+  const { isLogin, userInfo } = useUserInfo();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [viewPort, setViewPort] = useState<ViewportProps>({
@@ -58,6 +59,12 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
     dispatch(setEndTime(to));
     dispatch(setItems(itemsNum));
     sessionStorage.setItem('orderInfo', JSON.stringify(order));
+
+    Router.push(
+      isLogin
+        ? `/dropzone/${query.id}/book`
+        : `/login?r=${encodeURIComponent(`/dropzone/${query.id}/book`)}`
+    );
   }
 
   return (
@@ -215,17 +222,9 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </div>
 
             <div className="pt-8">
-              <Link
-                href={
-                  isLogin
-                    ? `/dropzone/${query.id}/book`
-                    : `/login?r=${encodeURIComponent(`/dropzone/${query.id}/book`)}`
-                }
-              >
-                <a className={`pointer-events-${canBook ? 'auto' : 'none'}`} onClick={book}>
-                  <Button className="w-full">Book Now</Button>
-                </a>
-              </Link>
+              <a className={`pointer-events-${canBook ? 'auto' : 'none'}`} onClick={book}>
+                <Button className="w-full">Book Now</Button>
+              </a>
             </div>
           </div>
         </div>

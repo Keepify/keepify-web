@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_DOMAIN } from 'constants/api';
-import { Transaction } from 'types/transaction';
+import { Transaction, TStatus } from 'types/transaction';
 
 type GetTransactionParams = {
   status?: string;
@@ -30,11 +30,11 @@ export async function getTransaction(id: string) {
   }
 }
 
-export async function updateTransactionStatus(transaction: Transaction) {
+export async function updateTransactionStatus(transactionID: string, status: TStatus) {
   try {
-    const { data } = await axios.put<{ transaction: Transaction }>(
-      `${API_DOMAIN}/transactions/${transaction.id}`,
-      transaction
+    const { data } = await axios.patch<{ transaction: Transaction }>(
+      `${API_DOMAIN}/transactions/${transactionID}`,
+      { status }
     );
 
     return data.transaction;

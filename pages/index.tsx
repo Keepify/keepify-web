@@ -42,7 +42,7 @@ const Home: NextPage = () => {
   }, [position]);
 
   return (
-    <article>
+    <article className="bg-purple min-h-screen">
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
           <Link href={isLogin ? '/profile' : '/login'}>
@@ -50,7 +50,7 @@ const Home: NextPage = () => {
           </Link>
         </li>
       </Drawer>
-      <section className="w-full bg-purple pt-20 pb-32">
+      <section className="w-full pt-20 pb-32">
         <nav className="lg:max-w-screen-lg max-w-3/4 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center">
           <Link href="/">
             <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>

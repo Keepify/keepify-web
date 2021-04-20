@@ -325,7 +325,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                 </div> */}
               </div>
             </section>
-            {userInfo.role === '1' && currentTransactions?.length && (
+            {userInfo.role === '1' && currentTransactions?.length ? (
               <section className="pb-20">
                 <div className="flex justify-between items-center pb-5">
                   <h2 className="text-orange lg:text-2xl text-xl  tracking-widest">
@@ -355,7 +355,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                   </div>
                 </div>
               </section>
-            )}
+            ) : null}
             <section className="pb-20">
               <div className="flex justify-between items-center pb-5">
                 <h2 className="text-orange lg:text-2xl text-xl  tracking-widest">Past Keeps</h2>
