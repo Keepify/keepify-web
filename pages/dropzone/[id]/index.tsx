@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import Drawer from 'components/Drawer';
 import { useDispatch } from 'react-redux';
 import { setEndTime, setItems, setStartTime } from 'actions/order';
+import 'react-toggle/style.css';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   const Router = useRouter();

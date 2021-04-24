@@ -104,13 +104,13 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                 <div className="mb-1 flex justify-between items-center">
                   <label className="tracking-widest text-orange text-sm">Starting Time</label>
                   <label className="tracking-widest text-sm">
-                    {moment(transaction.reservation_start).format('YYYY/MM/DD H:mm A')}
+                    {moment(transaction.reservation_start).format('YYYY/MM/DD')}
                   </label>
                 </div>
                 <div className="mb-4 flex justify-between items-center">
                   <label className="tracking-widest text-orange text-sm">Ending Time</label>
                   <label className="tracking-widest text-sm">
-                    {moment(transaction.reservation_end).format('YYYY/MM/DD H:mm A')}
+                    {moment(transaction.reservation_end).format('YYYY/MM/DD')}
                   </label>
                 </div>
                 {/* <div className="mb-4 flex justify-between items-center">

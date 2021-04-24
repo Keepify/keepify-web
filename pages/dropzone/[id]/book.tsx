@@ -25,6 +25,8 @@ import dynamic from 'next/dynamic';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import animationData from 'public/order/success.json';
+import { createTransaction } from 'services/transactions';
+import { errorNotification } from 'helpers/notification';
 
 const Lottie = dynamic(() => import('react-lottie'));
 
@@ -59,6 +61,8 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
   const [isExpiredDateComplete, setIsExpiredDateComplete] = useState(false);
   const [isCVCComplete, setIsCVCComplete] = useState(false);
   const [isPaymentComplete, setIsPaymentComplete] = useState(false);
+  const [clientNotes, setClientNotes] = useState('');
+  const [transactionID, setTransactionID] = useState('');
 
   const isCardInfoComplete = useMemo(() => {
     return isCardNumberComplete && isExpiredDateComplete && isCVCComplete;
@@ -94,12 +98,30 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
     try {
       setIsLoading(true);
 
-      const { token } = await stripe.createToken(cardElement);
-      console.log(token);
+      const result = await createTransaction({
+        dropzone_id: Router.query.id as string,
+        items_count: orderInfo.items,
+        client_notes: clientNotes,
+        start_date: moment(orderInfo.startTime).format('YYYY-MM-DD HH:mm:ss'),
+        end_date: moment(orderInfo.endTime).format('YYYY-MM-DD HH:mm:ss'),
+      });
+
+      await stripe.confirmCardPayment(result.client_secret, {
+        payment_method: {
+          card: cardElement,
+        },
+      });
+
+      setIsPaymentComplete(true);
+      setTransactionID(result.transaction_id);
 
       setIsLoading(false);
     } catch (e) {
       console.log(e);
+      errorNotification(
+        'Error',
+        'An error occurred while processing your payment. Please contact us.'
+      );
       setIsLoading(false);
     }
   }
@@ -174,11 +196,11 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
               Your order ID:{' '}
               <a
                 className="text-orange"
-                href="/order/5f7bedb0ed5b"
+                href={`/order/${transactionID}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                5f7bedb0ed5b
+                {transactionID.split('-')[4]}
               </a>
             </h3>
             <p className="max-w-xl mb-6 text-grey text-center">
@@ -186,7 +208,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
               please keep an eye on your email inbox!
             </p>
 
-            <a href="/order/5f7bedb0ed5b" target="_blank" rel="noreferrer">
+            <a href={`/order/${transactionID}`} target="_blank" rel="noreferrer">
               <Button>View Order</Button>
             </a>
           </div>
@@ -244,6 +266,8 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
               <textarea
                 className="w-full bg-full-white p-3 rounded-md shadow-xl resize-none"
                 rows={4}
+                value={clientNotes}
+                onChange={(e) => setClientNotes(e.target.value)}
               />
 
               <div>
@@ -261,13 +285,13 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
                 <div className="mb-2 flex justify-between items-center">
                   <label className="tracking-widest text-orange text-sm">Start</label>
                   <label className="tracking-widest text-sm">
-                    {moment(orderInfo.startTime).format('YYYY/MM/DD H:mm A')}
+                    {moment(orderInfo.startTime).format('YYYY/MM/DD')}
                   </label>
                 </div>
                 <div className="mb-5 flex justify-between items-center">
                   <label className="tracking-widest text-orange text-sm">End</label>
                   <label className="tracking-widest text-sm">
-                    {moment(orderInfo.endTime).format('YYYY/MM/DD H:mm A')}
+                    {moment(orderInfo.endTime).format('YYYY/MM/DD')}
                   </label>
                 </div>
                 <div className="mb-2 flex justify-between items-center">

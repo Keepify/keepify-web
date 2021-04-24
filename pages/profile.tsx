@@ -389,7 +389,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                       <h3 className="text-purple text-lg pt-4 pb-2">No past orders yet!</h3>
                       <p>
                         <Link href="/dropzones">
-                          <a className="text-orange">Check out the available places now</a>
+                          <a className="text-orange">Check out the available places now </a>
                         </Link>
                         and keep your first item!
                       </p>

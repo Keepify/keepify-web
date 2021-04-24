@@ -42,3 +42,24 @@ export async function updateTransactionStatus(transactionID: string, status: TSt
     throw e;
   }
 }
+
+type TransactionParams = {
+  dropzone_id: string;
+  items_count: number;
+  client_notes: string;
+  start_date: string;
+  end_date: string;
+};
+
+export async function createTransaction(params: TransactionParams) {
+  try {
+    const { data } = await axios.post<{ client_secret: string; transaction_id: string }>(
+      `${API_DOMAIN}/checkout/intent`,
+      params
+    );
+
+    return data;
+  } catch (e) {
+    throw e;
+  }
+}
