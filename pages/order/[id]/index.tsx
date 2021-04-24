@@ -8,7 +8,7 @@ import Pin from 'public/dropzone/pin';
 import { getTransaction, sendClientReview, updateTransactionStatus } from 'services/transactions';
 import { Transaction, TStatus } from 'types/transaction';
 import moment from 'moment';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Star, Mail } from 'react-feather';
 import { useUserInfo } from 'hooks/redux';
 import Button from 'components/Button';
@@ -34,9 +34,14 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
 
+  const [clientReview, setClientReview] = useState(transaction.client_review);
+  const [clientStars, setClientStars] = useState(transaction.client_stars);
+
   const isClient = transaction.host.id !== userInfo.id;
-  const isReviewed = transaction.client_review && !!transaction.client_stars;
-  const mockStar = 4;
+
+  const isReviewed = useMemo(() => {
+    return !!clientReview && clientReview.length && !!clientStars;
+  }, [clientReview, clientStars]);
 
   async function switchStatus() {
     try {
@@ -67,6 +72,9 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
       setIsLoading(true);
 
       await sendClientReview(transaction.id, reviewText, rating);
+
+      setClientReview(reviewText);
+      setClientStars(rating);
 
       setIsLoading(false);
     } catch (e) {
@@ -227,21 +235,18 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                   </div>
                 </div>
               )}
-              {!isClient && status === TStatus.REDEEMED && isReviewed && (
+              {status === TStatus.REDEEMED && isReviewed && (
                 <div className="bg-full-white rounded-md py-6 px-10 mt-5">
                   <label className="tracking-wider text-lg block mb-4">Review</label>
                   <div className="flex justify-between items-start mb-4">
-                    <label className="tracking-widest text-sm">
-                      It was very nice and nice and nice and stuff and stuff and stuff and stuff and
-                      stuff and stuff and stuff.
-                    </label>
+                    <label className="tracking-widest text-sm">{clientReview}</label>
                     <div className="flex">
                       {[...Array(5)].map((x, i) => (
                         <Star
                           key={i}
                           className="ml-1"
-                          color={i < mockStar ? '#FF8E6E' : '#7E7E7E'}
-                          fill={i < mockStar ? '#FF8E6E' : '#fff'}
+                          color={i < clientStars ? '#FF8E6E' : '#7E7E7E'}
+                          fill={i < clientStars ? '#FF8E6E' : '#fff'}
                           size={16}
                         />
                       ))}
@@ -324,10 +329,6 @@ OrderDetails.getInitialProps = async (ctx: PageContext) => {
     }
 
     const transaction = await getTransaction(ctx.query.id as string);
-    // const location = await getLocationByCode({
-    //   latitude: transaction.dropzone.location.lat,
-    //   longitude: transaction.dropzone.location.lng,
-    // });
 
     return {
       transaction,

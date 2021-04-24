@@ -4,17 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { NextPage } from 'next';
 import { verifyQRToken } from 'services/transactions';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 const RedeemPage: NextPage<Props> = ({ success }) => {
-  const Router = useRouter();
-  // useEffect(() => {
-  //   (async () => {
-  //     console.log(Router.query);
-  //     await verifyQRToken(Router.query.id as string, Router.query.token as string);
-  //   })();
-  // }, []);
   return (
     <article className="w-full min-h-screen bg-purple">
       <nav className="w-full bg-purple py-20 lg:px-24 flex justify-center">
