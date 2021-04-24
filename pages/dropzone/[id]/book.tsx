@@ -178,8 +178,8 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
       </nav>
 
       {isPaymentComplete ? (
-        <div className="max-w-screen-lg my-0 mx-auto pt-20 pb-14">
-          <div className="w-full shadow-2xl rounded-lg py-10 flex items-center flex-col">
+        <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-20 pb-14">
+          <div className="w-full shadow-2xl rounded-lg p-10 flex items-center flex-col">
             <Lottie
               options={{
                 loop: true,
@@ -191,7 +191,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
               style={{ margin: 0 }}
             />
 
-            <h1 className="my-4 text-3xl">Reservation Successful!</h1>
+            <h1 className="my-4 text-3xl text-center">Reservation Successful!</h1>
             <h3 className="mb-4">
               Your order ID:{' '}
               <a
@@ -215,7 +215,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
         </div>
       ) : (
         <>
-          <div className="max-w-screen-lg my-0 mx-auto pt-20 pb-14">
+          <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-20 pb-14">
             <Link href={`/dropzone/${Router.query.id}`}>
               <a
                 className="flex items-center text-orange cursor-pointer"
@@ -227,8 +227,8 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
             </Link>
           </div>
 
-          <div className="max-w-screen-lg my-0 mx-auto flex">
-            <form onSubmit={onSubmit} className="w-3/5 mr-12">
+          <div className="lg:max-w-screen-lg max-w-3/4 mx-auto flex pb-24 lg:flex-row flex-col-reverse">
+            <form onSubmit={onSubmit} className="lg:w-3/5 w-full lg:mr-12 mr-0">
               <h1 className="text-3xl font-bold mb-10">Checkout</h1>
 
               <div className="pb-6">
@@ -279,7 +279,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
                 </Button>
               </div>
             </form>
-            <div className="w-2/5">
+            <div className="lg:w-2/5 w-full lg:mb-0 mb-10">
               <div className="shadow-2xl rounded-lg p-8">
                 <label className="tracking-wider text-lg block mb-4">Order Summary</label>
                 <div className="mb-2 flex justify-between items-center">

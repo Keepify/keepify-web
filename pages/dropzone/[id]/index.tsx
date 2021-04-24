@@ -177,8 +177,8 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         <img src={details.thumbnail} alt="thumbnail" className="w-full object-cover h-72" />
       </div>
 
-      <div className="max-w-screen-lg my-0 mx-auto pt-20 flex">
-        <div className="w-4/6 mr-12">
+      <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-20 flex lg:flex-row flex-col-reverse">
+        <div className="lg:w-4/6 w-full lg:mr-12 mr-0">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">{details.name}</h1>
             <div className="text-xl font-bold flex">
@@ -215,9 +215,9 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </div>
           </div>
         </div>
-        <div className="w-2/6">
+        <div className="lg:w-2/6 w-full">
           {details.host.id === userInfo.id ? (
-            <div className="shadow-2xl rounded-lg p-8">
+            <div className="shadow-2xl rounded-lg p-8 lg:mb-0 mb-10">
               <div className="flex justify-between items-center">
                 <p className="text-lg font-bold">Dropzone Status</p>
                 <div className="flex items-center">
@@ -308,27 +308,27 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           )}
         </div>
       </div>
-      <div className="max-w-screen-lg my-0 mx-auto pt-10">
+      <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-10">
         <h2 className="text-2xl">Location</h2>
-        <div className="pt-6 w-full h-80">
-          <ReactMapGL
-            {...viewPort}
-            width="100%"
-            height="100%"
-            onViewportChange={(viewport) => setViewPort(viewport)}
-            mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
-            mapStyle="mapbox://styles/mapbox/streets-v11"
+      </div>
+      <div className="pt-6 lg:max-w-screen-lg mx-auto max-w-full w-full h-80">
+        <ReactMapGL
+          {...viewPort}
+          width="100%"
+          height="100%"
+          onViewportChange={(viewport) => setViewPort(viewport)}
+          mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
+          mapStyle="mapbox://styles/mapbox/streets-v11"
+        >
+          <Marker
+            latitude={details.location.lat}
+            longitude={details.location.lng}
+            offsetTop={-48}
+            offsetLeft={-24}
           >
-            <Marker
-              latitude={details.location.lat}
-              longitude={details.location.lng}
-              offsetTop={-48}
-              offsetLeft={-24}
-            >
-              <Pin />
-            </Marker>
-          </ReactMapGL>
-        </div>
+            <Pin />
+          </Marker>
+        </ReactMapGL>
       </div>
     </article>
   );
