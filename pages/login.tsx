@@ -16,6 +16,7 @@ import { setUserInfo } from 'actions/user';
 import { NextPage } from 'next';
 import { PageContext } from 'types';
 import { redirect } from 'middlewares/redirect';
+import Head from 'next/head';
 
 type Inputs = {
   email: string;
@@ -57,6 +58,9 @@ const Login: NextPage = () => {
 
   return (
     <div className="flex justify-between">
+      <Head>
+        <title>Keepify | Login</title>
+      </Head>
       {isLoading && <Loader />}
       <div className="w-1/2 min-h-screen relative lg:block hidden">
         <Image className="object-cover" src="/sign/sign.png" layout="fill" alt="bg" />

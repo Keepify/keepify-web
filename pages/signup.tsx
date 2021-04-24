@@ -16,6 +16,7 @@ import { PageContext } from 'types';
 import { redirect } from 'middlewares/redirect';
 import { NextPage } from 'next';
 import Loader from 'components/Loader';
+import Head from 'next/head';
 
 type Inputs = {
   firstName: string;
@@ -54,6 +55,9 @@ const Signup: NextPage = () => {
   }
   return (
     <div className="flex justify-between">
+      <Head>
+        <title>Keepify | Sign Up</title>
+      </Head>
       {isLoading && <Loader />}
       <div className="w-1/2 min-h-screen relative lg:block hidden">
         <Image className="object-cover" src="/sign/sign.png" layout="fill" alt="bg" />

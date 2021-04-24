@@ -18,6 +18,7 @@ import { capitalize } from 'helpers/string';
 import QRCode from 'qrcode.react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 const OrderDetails: NextPage<Props> = ({ transaction }) => {
   console.log({ transaction });
@@ -89,6 +90,9 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
   return (
     <>
       {isLoading && <Loader />}
+      <Head>
+        <title>Keepify | {transaction.dropzone.name}</title>
+      </Head>
       <article className="bg-silver pt-8 pb-12 min-h-screen w-full">
         <Link href="/">
           <a>

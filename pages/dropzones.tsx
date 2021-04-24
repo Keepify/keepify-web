@@ -14,6 +14,7 @@ import DropzoneCard, { SkeletonCard } from 'components/DropzoneCard';
 import Pin from 'public/dropzone/pin';
 import { useUserInfo } from 'hooks/redux';
 import Image from 'next/image';
+import Head from 'next/head';
 
 export default function Dropzones() {
   const { query } = useRouter();
@@ -121,6 +122,9 @@ export default function Dropzones() {
 
   return (
     <div className="w-full">
+      <Head>
+        <title>Keepify | Dropzones</title>
+      </Head>
       <nav className="w-full bg-purple shadow-xl relative">
         <div className="px-7 h-20 mx-auto flex justify-between items-center">
           <Link href="/">

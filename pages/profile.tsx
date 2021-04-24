@@ -28,6 +28,7 @@ import { getAllDropzones, getHostDropzones } from 'services/dropzone';
 import nextCookie from 'next-cookies';
 import setAuthToken from 'helpers/token';
 import Drawer from 'components/Drawer';
+import Head from 'next/head';
 
 type EditProfileFields = {
   firstName: string;
@@ -110,6 +111,9 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
 
   return (
     <article className="relative">
+      <Head>
+        <title>Keepify | Profile</title>
+      </Head>
       {isLoading && <Loader />}
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">

@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import cookies from 'js-cookie';
 import { Menu } from 'react-feather';
 import Drawer from 'components/Drawer';
+import Head from 'next/head';
 
 const Home: NextPage = () => {
   const [position, setPosition] = useState<LatLng>(null);
@@ -43,6 +44,9 @@ const Home: NextPage = () => {
 
   return (
     <article className="bg-purple min-h-screen">
+      <Head>
+        <title>Keepify | Keep Your Items As Long As You Need</title>
+      </Head>
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
           <Link href={`/dropzones${positionQuery}`}>

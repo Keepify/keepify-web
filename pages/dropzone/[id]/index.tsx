@@ -23,6 +23,7 @@ import { redirect } from 'middlewares/redirect';
 import Modal from 'components/Modal';
 import { errorNotification } from 'helpers/notification';
 import Loader from 'components/Loader';
+import Head from 'next/head';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   console.log({ details });
@@ -97,6 +98,9 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   return (
     <article>
       {isLoading && <Loader />}
+      <Head>
+        <title>Keepify | {details.name}</title>
+      </Head>
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
           <Link href="/">

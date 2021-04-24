@@ -4,10 +4,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { NextPage } from 'next';
 import { verifyQRToken } from 'services/transactions';
+import Head from 'next/head';
 
 const RedeemPage: NextPage<Props> = ({ success }) => {
   return (
     <article className="w-full min-h-screen bg-purple">
+      <Head>
+        <title>Keepify | {success ? 'Redeem Successful!' : 'Redeem Failed!'}</title>
+      </Head>
       <nav className="w-full bg-purple py-20 lg:px-24 flex justify-center">
         <Link href="/">
           <a className="text-orange-light text-xl tracking-widest font-bold text-center">Keepify</a>

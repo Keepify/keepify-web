@@ -27,6 +27,7 @@ import Loader from 'components/Loader';
 import animationData from 'public/order/success.json';
 import { createTransaction } from 'services/transactions';
 import { errorNotification } from 'helpers/notification';
+import Head from 'next/head';
 
 const Lottie = dynamic(() => import('react-lottie'));
 
@@ -129,6 +130,9 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
   return (
     <article>
       {isLoading && <Loader />}
+      <Head>
+        <title>Keepify | Checkout</title>
+      </Head>
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
           <Link href="/">
