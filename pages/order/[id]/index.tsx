@@ -5,7 +5,7 @@ import Link from 'next/link';
 import ReactMapGL, { ViewportProps, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Pin from 'public/dropzone/pin';
-import { getTransaction, updateTransactionStatus } from 'services/transactions';
+import { getTransaction, sendClientReview, updateTransactionStatus } from 'services/transactions';
 import { Transaction, TStatus } from 'types/transaction';
 import moment from 'moment';
 import { useState } from 'react';
@@ -19,7 +19,8 @@ import QRCode from 'qrcode.react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
+const OrderDetails: NextPage<Props> = ({ transaction }) => {
+  console.log({ transaction });
   const { userInfo } = useUserInfo();
   const { query } = useRouter();
   const [viewPort, setViewPort] = useState<ViewportProps>({
@@ -31,6 +32,11 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
   const [status, setStatus] = useState<TStatus>(transaction.status);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+
+  const isClient = transaction.host.id !== userInfo.id;
+  const isReviewed = transaction.client_review && !!transaction.client_stars;
+  const mockStar = 4;
 
   async function switchStatus() {
     try {
@@ -53,6 +59,22 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
     } catch (e) {
       setIsLoading(false);
       errorNotification('Error', 'An error occurred. Please try again later.');
+    }
+  }
+
+  async function submitReview() {
+    try {
+      setIsLoading(true);
+
+      await sendClientReview(transaction.id, reviewText, rating);
+
+      setIsLoading(false);
+    } catch (e) {
+      setIsLoading(false);
+      errorNotification(
+        'Error',
+        'An error occurred while submitting your review. Please try again later.'
+      );
     }
   }
 
@@ -113,12 +135,14 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                     {moment(transaction.reservation_end).format('YYYY/MM/DD')}
                   </label>
                 </div>
-                {/* <div className="mb-4 flex justify-between items-center">
-              <label className="tracking-wider text-lg">Client Notes</label>
-            </div>
-            <p className="tracking-wider text-sm">
-              I will be bringing 2 luggages that each weight 20kgs, please keep them carefully!
-            </p> */}
+                {transaction.client_note && (
+                  <>
+                    <div className="mb-4 flex justify-between items-center">
+                      <label className="tracking-wider text-lg">Client Notes</label>
+                    </div>
+                    <p className="tracking-wider text-sm">{transaction.client_note}</p>
+                  </>
+                )}
                 {status === TStatus.RECEIVED && (
                   <>
                     <div className="my-4">
@@ -128,7 +152,7 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                       <div>
                         <QRCode
                           size={200}
-                          value={`https://keepify.vercel.app/order/${query.id}?token=${transaction.host_token}`}
+                          value={`https://keepify.vercel.app/order/${query.id}/redeem?token=${transaction.host_token}`}
                         />
                       </div>
                       <div className="flex flex-col items-center ml-8">
@@ -147,7 +171,7 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                   </>
                 )}
               </div>
-              {status === TStatus.REDEEMED && (
+              {isClient && status === TStatus.REDEEMED && (
                 <div className="bg-full-white rounded-md py-6 px-10 mt-5">
                   <label className="tracking-wider text-lg block mb-4">Review</label>
                   <div className="flex justify-between items-center mb-4">
@@ -158,7 +182,7 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                       {[...Array(5)].map((x, i) => (
                         <Star
                           key={i}
-                          className="ml-1"
+                          className="ml-1 cursor-pointer"
                           color={
                             rating > 0 && i < rating
                               ? '#FF8E6E'
@@ -182,10 +206,47 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                   </div>
 
                   <label className="tracking-widest text-sm block mb-4">
-                    Do you have any feedback for us or for the host? (optional)
+                    Do you have any feedback for us or for the host?
                   </label>
 
-                  <textarea className="w-full bg-white p-3 rounded-md resize-none" rows={4} />
+                  <textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    className="w-full bg-white p-3 rounded-md resize-none"
+                    rows={4}
+                  />
+
+                  <div className="flex justify-end pt-4">
+                    <a
+                      className={`pointer-events-${
+                        reviewText.trim().length && rating ? 'auto' : 'none'
+                      }`}
+                    >
+                      <Button onClick={submitReview}>Submit</Button>
+                    </a>
+                  </div>
+                </div>
+              )}
+              {!isClient && status === TStatus.REDEEMED && isReviewed && (
+                <div className="bg-full-white rounded-md py-6 px-10 mt-5">
+                  <label className="tracking-wider text-lg block mb-4">Review</label>
+                  <div className="flex justify-between items-start mb-4">
+                    <label className="tracking-widest text-sm">
+                      It was very nice and nice and nice and stuff and stuff and stuff and stuff and
+                      stuff and stuff and stuff.
+                    </label>
+                    <div className="flex">
+                      {[...Array(5)].map((x, i) => (
+                        <Star
+                          key={i}
+                          className="ml-1"
+                          color={i < mockStar ? '#FF8E6E' : '#7E7E7E'}
+                          fill={i < mockStar ? '#FF8E6E' : '#fff'}
+                          size={16}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </article>
@@ -214,9 +275,6 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
               <section className="py-8 px-10">
                 <div className="mb-2 flex justify-between items-center">
                   <label className="tracking-wider text-lg">{transaction.dropzone.name}</label>
-                </div>
-                <div className="mb-4 flex justify-between items-center">
-                  <label className="tracking-wider text-sm text-grey">{location}</label>
                   <div className="text-sm font-bold flex">
                     <Star style={{ width: 18, height: 18 }} color="#FF8E6E" />
                     <span className="ml-2">{transaction.dropzone.rating}</span>
@@ -224,12 +282,16 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                 </div>
 
                 <div className="mb-4 flex justify-between items-center">
-                  <label className="tracking-wider text-lg">Host Information</label>
+                  <label className="tracking-wider text-lg">
+                    {isClient ? 'Host Information' : 'Client Information'}
+                  </label>
                 </div>
 
                 <div className="mb-2 flex justify-between items-center">
                   <label className="tracking-wider text-sm">
-                    {transaction.dropzone.host.fname} {transaction.dropzone.host.lname}
+                    {isClient
+                      ? `${transaction.host.fname} ${transaction.host.lname}`
+                      : `${transaction.client.fname} ${transaction.client.lname}`}
                   </label>
                 </div>
 
@@ -237,7 +299,7 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
                   <div className="text-sm flex">
                     <Mail style={{ width: 18, height: 18 }} color="#000000" />
                     <label className="tracking-wider text-sm ml-4">
-                      {transaction.dropzone.host.email}
+                      {isClient ? transaction.host.email : transaction.client.email}
                     </label>
                   </div>
                 </div>
@@ -252,7 +314,6 @@ const OrderDetails: NextPage<Props> = ({ transaction, location }) => {
 
 type Props = {
   transaction: Transaction;
-  location: string;
 };
 
 OrderDetails.getInitialProps = async (ctx: PageContext) => {
@@ -270,7 +331,6 @@ OrderDetails.getInitialProps = async (ctx: PageContext) => {
 
     return {
       transaction,
-      location: 'Çankaya/Ankara, Turkey', // `${location[0]} ${location[1]}`,
     };
   } catch (e) {
     redirect(ctx.res, '/');

@@ -264,7 +264,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
 
               <h2 className="text-xl font-bold mb-4">Additional Notes (optional)</h2>
               <textarea
-                className="w-full bg-full-white p-3 rounded-md shadow-xl resize-none"
+                className="w-full bg-white p-3 rounded-md resize-none"
                 rows={4}
                 value={clientNotes}
                 onChange={(e) => setClientNotes(e.target.value)}

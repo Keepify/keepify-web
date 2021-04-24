@@ -113,11 +113,10 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
       {isLoading && <Loader />}
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
-          {userInfo.role === '1' ? (
-            <Link href="/dropzones">
-              <a className="text-white text-xl tracking-wider">Dropzones</a>
-            </Link>
-          ) : (
+          <Link href="/dropzones">
+            <a className="text-white text-xl tracking-wider">Dropzones</a>
+          </Link>
+          {userInfo.role === '1' && (
             <a
               className="text-white text-xl tracking-wider"
               href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
@@ -218,13 +217,14 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             </Link>
             <ul className="lg:flex flex-row hidden">
               <li>
-                {userInfo.role === '1' ? (
-                  <Link href="/dropzones">
-                    <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
-                      Dropzones
-                    </a>
-                  </Link>
-                ) : (
+                <Link href="/dropzones">
+                  <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
+                    Dropzones
+                  </a>
+                </Link>
+              </li>
+              <li>
+                {userInfo.role === '1' && (
                   <a
                     className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition"
                     href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
@@ -461,12 +461,12 @@ Profile.getInitialProps = async (ctx: PageContext) => {
       throw new Error('Not logged in');
     }
 
-    const transactions = await getTransactions();
+    const transactions = await getTransactions({ past: 'true' });
 
     // if the user is a host, get dropzones
     if (userInfo.role === '1') {
       const dropzones = await getHostDropzones(userInfo.id);
-      const currentTransactions = await getTransactions({ status: 'CREATED' });
+      const currentTransactions = await getTransactions();
 
       return {
         transactions,

@@ -12,6 +12,9 @@ export type Transaction = {
   status: TStatus;
   host: User;
   client: User;
+  client_note: string;
+  client_review: string;
+  client_stars: number;
 };
 
 export enum TStatus {

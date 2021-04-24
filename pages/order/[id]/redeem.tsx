@@ -2,8 +2,19 @@ import { redirect } from 'middlewares/redirect';
 import { PageContext } from 'types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { NextPage } from 'next';
+import { verifyQRToken } from 'services/transactions';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-const RedeemPage = () => {
+const RedeemPage: NextPage<Props> = ({ success }) => {
+  const Router = useRouter();
+  // useEffect(() => {
+  //   (async () => {
+  //     console.log(Router.query);
+  //     await verifyQRToken(Router.query.id as string, Router.query.token as string);
+  //   })();
+  // }, []);
   return (
     <article className="w-full min-h-screen bg-purple">
       <nav className="w-full bg-purple py-20 lg:px-24 flex justify-center">
@@ -12,29 +23,40 @@ const RedeemPage = () => {
         </Link>
       </nav>
       <div className="pb-14 w-11/12 mx-auto">
-        <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">
-          <Image
-            src="/order/redeem_confirm.svg"
-            width={250}
-            height={250}
-            alt="redeem_illustration"
-          />
-          <h3 className="mt-8 tracking-wider text-xl text-green">Success!</h3>
-          <p className="mt-4 text-dark tracking-wider text-center">
-            The item has been successfully redeemed. Thank you for using Keepify!
-          </p>
-        </div>
-
-        {/* <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">
-          <Image src="/order/redeem_error.svg" width={250} height={250} alt="redeem_illustration" />
-          <h3 className="mt-8 tracking-wider text-xl text-red">Failure!</h3>
-          <p className="mt-4 text-dark tracking-wider text-center">
-            The transaction has either been previously redeemed or you do not own this item.
-          </p>
-        </div> */}
+        {success ? (
+          <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">
+            <Image
+              src="/order/redeem_confirm.svg"
+              width={250}
+              height={250}
+              alt="redeem_illustration"
+            />
+            <h3 className="mt-8 tracking-wider text-xl text-green">Success!</h3>
+            <p className="mt-4 text-dark tracking-wider text-center">
+              The item has been successfully redeemed. Thank you for using Keepify!
+            </p>
+          </div>
+        ) : (
+          <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">
+            <Image
+              src="/order/redeem_error.svg"
+              width={250}
+              height={250}
+              alt="redeem_illustration"
+            />
+            <h3 className="mt-8 tracking-wider text-xl text-red">Failure!</h3>
+            <p className="mt-4 text-dark tracking-wider text-center">
+              The transaction has either been previously redeemed or you do not own this item.
+            </p>
+          </div>
+        )}
       </div>
     </article>
   );
+};
+
+type Props = {
+  success: boolean;
 };
 
 RedeemPage.getInitialProps = async (ctx: PageContext) => {
@@ -46,6 +68,13 @@ RedeemPage.getInitialProps = async (ctx: PageContext) => {
 
     if (!isLogin) {
       redirect(ctx.res, `/login?r=${encodeURIComponent('/order/redeem?token=' + token)}`);
+    }
+
+    try {
+      await verifyQRToken(ctx.query.id as string, token as string);
+      return { success: true };
+    } catch (e) {
+      return { success: false };
     }
   } catch (e) {
     redirect(ctx.res, '/');

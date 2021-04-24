@@ -4,12 +4,13 @@ import { Transaction, TStatus } from 'types/transaction';
 
 type GetTransactionParams = {
   status?: string;
+  past: string;
 };
 
 export async function getTransactions(params?: GetTransactionParams) {
   try {
     const { data } = await axios.get<{ transactions: Transaction[] }>(
-      `${API_DOMAIN}/transactions/?${params?.status ? new URLSearchParams(params).toString() : ''}`
+      `${API_DOMAIN}/transactions/?${new URLSearchParams(params).toString()}`
     );
 
     return data.transactions;
@@ -56,6 +57,34 @@ export async function createTransaction(params: TransactionParams) {
     const { data } = await axios.post<{ client_secret: string; transaction_id: string }>(
       `${API_DOMAIN}/checkout/intent`,
       params
+    );
+
+    return data;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function verifyQRToken(transactionID: string, token: string) {
+  try {
+    const { data } = await axios.post(`${API_DOMAIN}/transactions/${transactionID}/verify_token`, {
+      token,
+    });
+
+    return data;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function sendClientReview(transactionID: string, review: string, stars: number) {
+  try {
+    const { data } = await axios.patch(
+      `${API_DOMAIN}/transactions/${transactionID}/client_review`,
+      {
+        client_review: review,
+        client_stars: stars,
+      }
     );
 
     return data;
