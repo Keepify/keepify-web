@@ -427,7 +427,8 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                             label={`$${dropzone.rate}/${dropzone.unit}`}
                             img={dropzone.thumbnail}
                             header={dropzone.name}
-                            tagText="Open"
+                            tagText={dropzone.active ? 'Open' : 'Closed'}
+                            tagColor={dropzone.active ? 'bg-green' : 'bg-red'}
                           />
                         ))
                       : null}

@@ -2,6 +2,7 @@ import { User } from './user';
 
 export type DropzoneListItem = {
   id: string;
+  active: boolean;
   name: string;
   d_type: string;
   host: User;

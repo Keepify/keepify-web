@@ -10,7 +10,8 @@ export type Transaction = {
   reservation_end: string;
   reservation_start: string;
   status: TStatus;
-  user: User;
+  host: User;
+  client: User;
 };
 
 export enum TStatus {

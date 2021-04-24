@@ -5,20 +5,27 @@ import ReactMapGL, { ViewportProps, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Pin from 'public/dropzone/pin';
 import { useMemo, useRef, useState } from 'react';
-import { Archive, Briefcase, Star, Plus, Minus, Menu } from 'react-feather';
+import { Archive, Briefcase, Star, Plus, Minus, Menu, X } from 'react-feather';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import Button from 'components/Button';
 import { motion } from 'framer-motion';
-import { getDropzone } from 'services/dropzone';
+import { getDropzone, toggleDropzoneStatus } from 'services/dropzone';
 import { useUserInfo } from 'hooks/redux';
 import { useRouter } from 'next/router';
 import Drawer from 'components/Drawer';
 import { useDispatch } from 'react-redux';
 import { setEndTime, setItems, setStartTime } from 'actions/order';
+import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
+import { PageContext } from 'types';
+import { redirect } from 'middlewares/redirect';
+import Modal from 'components/Modal';
+import { errorNotification } from 'helpers/notification';
+import Loader from 'components/Loader';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
+  console.log({ details });
   const Router = useRouter();
   const { query } = Router;
   const { isLogin, userInfo } = useUserInfo();
@@ -32,6 +39,9 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
   const [itemsNum, setItemsNum] = useState(1);
+  const [isActive, setIsActive] = useState(details.active);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const toRef = useRef(null);
 
   const canBook = useMemo(() => {
@@ -68,8 +78,24 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
     );
   }
 
+  async function handleDropzoneStatus() {
+    try {
+      setIsLoading(true);
+      await toggleDropzoneStatus(details.id, !isActive);
+      setIsActive((prev) => !prev);
+      setIsLoading(false);
+    } catch (e) {
+      setIsLoading(false);
+      errorNotification(
+        'Error',
+        'An error occurred while toggling the dropzone status. Please try again later.'
+      );
+    }
+  }
+
   return (
     <article>
+      {isLoading && <Loader />}
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
           <Link href="/">
@@ -82,6 +108,26 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           </Link>
         </li>
       </Drawer>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 lg:w-160 w-full p-8 relative flex overflow-hidden">
+          <span
+            className="absolute top-8 right-8 cursor-pointer"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <X size={24} color="#000" />
+          </span>
+          <div className="w-full flex flex-col">
+            <p className="font-bold pb-8 text-lg pr-6">
+              Are you sure to {isActive ? 'inactivate' : 'activate'} the dropzone?
+            </p>
+            <div>
+              <Button className="w-full" onClick={handleDropzoneStatus}>
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
       <nav className="w-full bg-purple shadow-xl relative">
         <div className="lg:max-w-screen-lg max-w-3/4 my-0 h-20 mx-auto flex justify-between items-center">
           <Link href="/">
@@ -90,15 +136,24 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </a>
           </Link>
           <ul className="lg:flex flex-row hidden">
+            {userInfo.role !== '1' && (
+              <li>
+                <Link href="/about">
+                  <a
+                    className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
+                    href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Become a Host
+                  </a>
+                </Link>
+              </li>
+            )}
             <li>
-              <Link href="/about">
-                <a
-                  className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
-                  href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Become a Host
+              <Link href="/dropzones">
+                <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
+                  Dropzones
                 </a>
               </Link>
             </li>
@@ -160,74 +215,96 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           </div>
         </div>
         <div className="w-2/6">
-          <div className="shadow-2xl rounded-lg p-8">
-            <p className="text-xl font-bold">${details.rate}/day</p>
-            <p className="pt-6 pb-2 font-bold">Dates</p>
-            <div className="flex">
-              <div className="w-1/2">
-                <DayPickerInput
-                  value={from}
-                  placeholder="Drop-off"
-                  format="LL"
-                  dayPickerProps={{
-                    selectedDays: [from, { from, to }],
-                    disabledDays: { after: to },
-                    toMonth: to,
-                    modifiers: { start: from, end: to },
-                    numberOfMonths: 2,
-                    onDayClick: () => toRef.current.getInput().focus(),
-                  }}
-                  onDayChange={(date) => setFrom(date)}
-                />
+          {details.host.id === userInfo.id ? (
+            <div className="shadow-2xl rounded-lg p-8">
+              <div className="flex justify-between items-center">
+                <p className="text-lg font-bold">Dropzone Status</p>
+                <div className="flex items-center">
+                  <Toggle
+                    checked={isActive}
+                    icons={false}
+                    onChange={() => {
+                      setIsModalOpen(true);
+                    }}
+                  />
+                </div>
               </div>
-              <div className="w-1/2">
-                <DayPickerInput
-                  ref={toRef}
-                  value={to}
-                  placeholder="Pickup"
-                  format="LL"
-                  dayPickerProps={{
-                    selectedDays: [from, { from, to }],
-                    disabledDays: { before: from },
-                    modifiers: { start: from, end: to },
-                    month: from,
-                    fromMonth: from,
-                    numberOfMonths: 2,
-                  }}
-                  onDayChange={(date) => setTo(date)}
-                />
-              </div>
+              <p className="text-sm pt-8">
+                {isActive
+                  ? 'After setting the dropzone to being inactive, it will no longer appear within the search results. However, it would not cancel any ongoing transaction if there is any.'
+                  : 'After setting the dropzone to being active, it will start to appear within the search results.'}
+              </p>
             </div>
-
-            <p className="pt-4 pb-2 font-bold">Number of Items</p>
-            <div className="flex justify-between items-center">
-              <span className="text-xl font-bold">{itemsNum}</span>
+          ) : (
+            <div className="shadow-2xl rounded-lg p-8">
+              <p className="text-xl font-bold">${details.rate}/day</p>
+              <p className="pt-6 pb-2 font-bold">Dates</p>
               <div className="flex">
-                <motion.span
-                  whileHover={{ rotate: 180 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex justify-center items-center w-6 h-6 mr-1 shadow-2xl rounded-xl cursor-pointer"
-                  onClick={decreaseNum}
-                >
-                  <Minus size={16} />
-                </motion.span>
-                <motion.span
-                  whileHover={{ rotate: 180 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex justify-center items-center w-6 h-6 shadow-2xl rounded-xl cursor-pointer"
-                  onClick={increaseNum}
-                >
-                  <Plus size={16} />
-                </motion.span>
+                <div className="w-1/2">
+                  <DayPickerInput
+                    value={from}
+                    placeholder="Drop-off"
+                    format="LL"
+                    dayPickerProps={{
+                      selectedDays: [from, { from, to }],
+                      disabledDays: { after: to },
+                      toMonth: to,
+                      modifiers: { start: from, end: to },
+                      numberOfMonths: 2,
+                      onDayClick: () => toRef.current.getInput().focus(),
+                    }}
+                    onDayChange={(date) => setFrom(date)}
+                  />
+                </div>
+                <div className="w-1/2">
+                  <DayPickerInput
+                    ref={toRef}
+                    value={to}
+                    placeholder="Pickup"
+                    format="LL"
+                    dayPickerProps={{
+                      selectedDays: [from, { from, to }],
+                      disabledDays: { before: from },
+                      modifiers: { start: from, end: to },
+                      month: from,
+                      fromMonth: from,
+                      numberOfMonths: 2,
+                    }}
+                    onDayChange={(date) => setTo(date)}
+                  />
+                </div>
+              </div>
+
+              <p className="pt-4 pb-2 font-bold">Number of Items</p>
+              <div className="flex justify-between items-center">
+                <span className="text-xl font-bold">{itemsNum}</span>
+                <div className="flex">
+                  <motion.span
+                    whileHover={{ rotate: 180 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex justify-center items-center w-6 h-6 mr-1 shadow-2xl rounded-xl cursor-pointer"
+                    onClick={decreaseNum}
+                  >
+                    <Minus size={16} />
+                  </motion.span>
+                  <motion.span
+                    whileHover={{ rotate: 180 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex justify-center items-center w-6 h-6 shadow-2xl rounded-xl cursor-pointer"
+                    onClick={increaseNum}
+                  >
+                    <Plus size={16} />
+                  </motion.span>
+                </div>
+              </div>
+
+              <div className="pt-8">
+                <a className={`pointer-events-${canBook ? 'auto' : 'none'}`} onClick={book}>
+                  <Button className="w-full">Book Now</Button>
+                </a>
               </div>
             </div>
-
-            <div className="pt-8">
-              <a className={`pointer-events-${canBook ? 'auto' : 'none'}`} onClick={book}>
-                <Button className="w-full">Book Now</Button>
-              </a>
-            </div>
-          </div>
+          )}
         </div>
       </div>
       <div className="max-w-screen-lg my-0 mx-auto pt-10">
@@ -261,9 +338,15 @@ type Props = {
   location: string;
 };
 
-DropzoneDetails.getInitialProps = async (ctx: NextPageContext) => {
+DropzoneDetails.getInitialProps = async (ctx: PageContext) => {
   const { query } = ctx;
+  const { userInfo } = ctx.store.getState().user;
   const dropzone = await getDropzone(query.id as string);
+
+  // only the host can view an inactive dropzone
+  if (!dropzone.active && userInfo.id !== dropzone.host.id) {
+    redirect(ctx.res, '/');
+  }
   // const location = await getLocationByCode({
   //   latitude: dropzone.location.lat,
   //   longitude: dropzone.location.lng,

@@ -48,3 +48,13 @@ export async function getHostDropzones(id: string) {
     throw e;
   }
 }
+
+export async function toggleDropzoneStatus(id: string, status: boolean) {
+  try {
+    const { data } = await axios.patch(`${API_DOMAIN}/dropzones/${id}`, { active: status });
+
+    return data;
+  } catch (e) {
+    throw e;
+  }
+}
