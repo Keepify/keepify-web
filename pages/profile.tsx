@@ -116,7 +116,9 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
           <Link href="/dropzones">
             <a className="text-white text-xl tracking-wider">Dropzones</a>
           </Link>
-          {userInfo.role === '1' && (
+        </li>
+        {userInfo.role === '1' && (
+          <li className="pb-4">
             <a
               className="text-white text-xl tracking-wider"
               href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
@@ -125,8 +127,8 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             >
               Become a Host
             </a>
-          )}
-        </li>
+          </li>
+        )}
         <li className="pb-4">
           <Link href={`/?logout=${+new Date()}`}>
             <a className="text-white text-xl tracking-wider">Logout</a>
@@ -211,7 +213,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
       </Modal>
       <header>
         <div className="w-full absolute z-10 top-0">
-          <nav className="lg:max-w-screen-lg max-w-3/4 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center pt-20">
+          <nav className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center pt-20">
             <Link href="/">
               <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>
             </Link>
@@ -260,7 +262,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
         </div>
       </header>
       <div className="relative w-full">
-        <div className="lg:max-w-screen-lg max-w-3/4 mx-auto">
+        <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto">
           <label
             htmlFor="profile-img"
             className="absolute w-32 h-32 -top-16 bg-orange-light bg-opacity-40 rounded-full flex justify-center items-center"

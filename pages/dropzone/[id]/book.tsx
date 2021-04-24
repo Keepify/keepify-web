@@ -142,7 +142,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
         </li>
       </Drawer>
       <nav className="w-full bg-purple shadow-xl relative">
-        <div className="lg:max-w-screen-lg max-w-3/4 my-0 h-20 mx-auto flex justify-between items-center">
+        <div className="lg:max-w-screen-lg lg:w-full w-10/12 my-0 h-20 mx-auto flex justify-between items-center">
           <Link href="/">
             <a className="text-orange-light text-xl tracking-widest font-bold lg:inline hidden">
               Keepify
@@ -178,7 +178,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
       </nav>
 
       {isPaymentComplete ? (
-        <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-20 pb-14">
+        <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto pt-20 pb-14">
           <div className="w-full shadow-2xl rounded-lg p-10 flex items-center flex-col">
             <Lottie
               options={{
@@ -215,7 +215,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
         </div>
       ) : (
         <>
-          <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-20 pb-14">
+          <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto pt-20 pb-14">
             <Link href={`/dropzone/${Router.query.id}`}>
               <a
                 className="flex items-center text-orange cursor-pointer"
@@ -227,7 +227,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
             </Link>
           </div>
 
-          <div className="lg:max-w-screen-lg max-w-3/4 mx-auto flex pb-24 lg:flex-row flex-col-reverse">
+          <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto flex pb-24 lg:flex-row flex-col-reverse">
             <form onSubmit={onSubmit} className="lg:w-3/5 w-full lg:mr-12 mr-0">
               <h1 className="text-3xl font-bold mb-10">Checkout</h1>
 

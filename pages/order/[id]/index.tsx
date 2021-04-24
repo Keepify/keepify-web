@@ -97,17 +97,19 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
             </nav>
           </a>
         </Link>
-        <main className="pt-10 max-w-screen-lg mx-auto">
+        <main className="pt-10 lg:max-w-screen-lg lg:w-full w-10/12 mx-auto">
           <header className="bg-full-white py-4 px-6 flex justify-between items-center rounded-md">
-            <h2 className="text-xl font-bold">Order: {transaction.id.split('-')[4]}</h2>
-            <span className="bg-green text-white px-6 py-3 rounded-full text-center">
+            <h2 className="lg:text-xl text-base font-bold">
+              Order: {transaction.id.split('-')[4]}
+            </h2>
+            <span className="bg-green text-white px-6 py-3 ml-4 rounded-full text-center">
               {capitalize(status)}
             </span>
           </header>
 
-          <div className="mt-8 flex items-start">
-            <article className="w-3/5 mr-8">
-              <div className="bg-full-white rounded-md py-6 px-10">
+          <div className="mt-8 flex lg:flex-row flex-col-reverse items-start">
+            <article className="lg:w-3/5 w-full lg:mr-8 mr-0">
+              <div className="bg-full-white rounded-md lg:py-6 py-5 lg:px-10 px-5">
                 {[TStatus.PAID, TStatus.CONFIRMED].includes(status) && (
                   <>
                     <div className="flex justify-between items-center mb-2">
@@ -180,7 +182,7 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                 )}
               </div>
               {isClient && status === TStatus.REDEEMED && (
-                <div className="bg-full-white rounded-md py-6 px-10 mt-5">
+                <div className="bg-full-white rounded-md lg:py-6 lg:px-10 py-3 px-5 mt-5">
                   <label className="tracking-wider text-lg block mb-4">Review</label>
                   <div className="flex justify-between items-center mb-4">
                     <label className="tracking-widest text-sm">
@@ -255,7 +257,7 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                 </div>
               )}
             </article>
-            <aside className="w-2/5 bg-full-white rounded-md overflow-hidden">
+            <aside className="lg:w-2/5 w-full bg-full-white rounded-md overflow-hidden lg:mb-0 mb-10">
               <div className="w-full">
                 <ReactMapGL
                   width="100%"
@@ -277,7 +279,7 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                   </Marker>
                 </ReactMapGL>
               </div>
-              <section className="py-8 px-10">
+              <section className="lg:py-8 lg:px-10 py-4 px-5">
                 <div className="mb-2 flex justify-between items-center">
                   <label className="tracking-wider text-lg">{transaction.dropzone.name}</label>
                   <div className="text-sm font-bold flex">

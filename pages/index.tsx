@@ -45,17 +45,27 @@ const Home: NextPage = () => {
     <article className="bg-purple min-h-screen">
       <Drawer show={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <li className="pb-4">
+          <Link href={`/dropzones${positionQuery}`}>
+            <a className="text-white text-xl tracking-wider">Dropzones</a>
+          </Link>
+        </li>
+        <li className="pb-4">
           <Link href={isLogin ? '/profile' : '/login'}>
             <a className="text-white text-xl tracking-wider">{isLogin ? 'Profile' : 'Login'}</a>
           </Link>
         </li>
       </Drawer>
       <section className="w-full pt-20 pb-32">
-        <nav className="lg:max-w-screen-lg max-w-3/4 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center">
+        <nav className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto flex lg:flex-row flex-col-reverse justify-between items-center">
           <Link href="/">
             <a className="text-orange-light text-2xl tracking-widest font-bold">Keepify</a>
           </Link>
           <ul className="lg:flex flex-row hidden">
+            <li>
+              <Link href={`/dropzones${positionQuery}`}>
+                <a className="text-white text-xl tracking-wider">Dropzones</a>
+              </Link>
+            </li>
             <li>
               <Link href={isLogin ? '/profile' : '/login'}>
                 <a className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition">
@@ -70,7 +80,7 @@ const Home: NextPage = () => {
             </span>
           </div>
         </nav>
-        <div className="lg:max-w-screen-lg max-w-3/4 mx-auto flex justify-between items-center lg:pt-24 pt-12 lg:flex-row flex-col">
+        <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto flex justify-between items-center lg:pt-24 pt-12 lg:flex-row flex-col">
           <div className="lg:max-w-1/2 max-w-none">
             <Fade up duration={600} delay={300}>
               <h1 className="text-white font-bold lg:text-5xl text-4xl pb-5 leading-tight">

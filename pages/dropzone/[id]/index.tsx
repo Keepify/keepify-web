@@ -130,7 +130,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         </div>
       </Modal>
       <nav className="w-full bg-purple shadow-xl relative">
-        <div className="lg:max-w-screen-lg max-w-3/4 my-0 h-20 mx-auto flex justify-between items-center">
+        <div className="lg:max-w-screen-lg lg:w-full w-10/12 my-0 h-20 mx-auto flex justify-between items-center">
           <Link href="/">
             <a className="text-orange-light text-xl tracking-widest font-bold lg:inline hidden">
               Keepify
@@ -177,7 +177,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         <img src={details.thumbnail} alt="thumbnail" className="w-full object-cover h-72" />
       </div>
 
-      <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-20 flex lg:flex-row flex-col-reverse">
+      <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto pt-20 flex lg:flex-row flex-col-reverse">
         <div className="lg:w-4/6 w-full lg:mr-12 mr-0">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">{details.name}</h1>
@@ -308,7 +308,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           )}
         </div>
       </div>
-      <div className="lg:max-w-screen-lg max-w-3/4 mx-auto pt-10">
+      <div className="lg:max-w-screen-lg lg:w-full w-10/12 mx-auto pt-10">
         <h2 className="text-2xl">Location</h2>
       </div>
       <div className="pt-6 lg:max-w-screen-lg mx-auto max-w-full w-full h-80">

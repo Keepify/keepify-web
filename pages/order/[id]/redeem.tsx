@@ -13,7 +13,7 @@ const RedeemPage: NextPage<Props> = ({ success }) => {
           <a className="text-orange-light text-xl tracking-widest font-bold text-center">Keepify</a>
         </Link>
       </nav>
-      <div className="pb-14 w-11/12 mx-auto">
+      <div className="pb-14 w-10/12 mx-auto">
         {success ? (
           <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">
             <Image
