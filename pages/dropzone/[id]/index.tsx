@@ -84,6 +84,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
       await toggleDropzoneStatus(details.id, !isActive);
       setIsActive((prev) => !prev);
       setIsLoading(false);
+      setIsModalOpen(false);
     } catch (e) {
       setIsLoading(false);
       errorNotification(
@@ -109,7 +110,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
         </li>
       </Drawer>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 lg:w-160 w-full p-8 relative flex overflow-hidden">
+        <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 lg:w-120 w-full p-8 relative flex overflow-hidden">
           <span
             className="absolute top-8 right-8 cursor-pointer"
             onClick={() => setIsModalOpen(false)}
