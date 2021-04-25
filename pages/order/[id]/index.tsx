@@ -9,7 +9,7 @@ import { getTransaction, sendClientReview, updateTransactionStatus } from 'servi
 import { Transaction, TStatus } from 'types/transaction';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
-import { Star, Mail } from 'react-feather';
+import { Star, Mail, X } from 'react-feather';
 import { useUserInfo } from 'hooks/redux';
 import Button from 'components/Button';
 import { errorNotification } from 'helpers/notification';
@@ -19,6 +19,7 @@ import QRCode from 'qrcode.react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Modal from 'components/Modal';
 
 const OrderDetails: NextPage<Props> = ({ transaction }) => {
   console.log({ transaction });
@@ -37,6 +38,8 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
 
   const [clientReview, setClientReview] = useState(transaction.client_review);
   const [clientStars, setClientStars] = useState(transaction.client_stars);
+
+  const [confirmModal, setConfirmModal] = useState(false);
 
   const isClient = transaction.host.id !== userInfo.id;
 
@@ -62,6 +65,7 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
           setStatus(TStatus.CONFIRMED);
       }
       setIsLoading(false);
+      setConfirmModal(false);
     } catch (e) {
       setIsLoading(false);
       errorNotification('Error', 'An error occurred. Please try again later.');
@@ -93,6 +97,35 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
       <Head>
         <title>Keepify | {transaction.dropzone.name}</title>
       </Head>
+
+      <Modal isOpen={confirmModal} onClose={() => setConfirmModal(false)}>
+        <div className="bg-silver shadow-2xl rounded-xl max-w-3/4 lg:w-120 w-full p-8 relative flex overflow-hidden">
+          <span
+            className="absolute top-8 right-8 cursor-pointer"
+            onClick={() => setConfirmModal(false)}
+          >
+            <X size={24} color="#000" />
+          </span>
+          <div className="w-full flex flex-col">
+            <p className="font-bold text-lg pr-6">
+              {status === TStatus.PAID
+                ? 'Are you sure to accept this order?'
+                : 'Are you sure that you have received the item(s)?'}
+            </p>
+            {status === TStatus.CONFIRMED && (
+              <p className="pt-4 text-md">
+                False information shall result into an invalid transaction.
+              </p>
+            )}
+            <div className="pt-8">
+              <Button className="w-full" onClick={switchStatus}>
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
       <article className="bg-silver pt-8 pb-12 min-h-screen w-full">
         <Link href="/">
           <a>
@@ -114,13 +147,16 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
           <div className="mt-8 flex lg:flex-row flex-col-reverse items-start">
             <article className="lg:w-3/5 w-full lg:mr-8 mr-0">
               <div className="bg-full-white rounded-md lg:py-6 py-5 lg:px-10 px-5">
-                {[TStatus.PAID, TStatus.CONFIRMED].includes(status) && (
+                {!isClient && [TStatus.PAID, TStatus.CONFIRMED].includes(status) && (
                   <>
                     <div className="flex justify-between items-center mb-2">
                       <label className="tracking-wider text-lg">
                         {status === TStatus.PAID ? 'Accept this order?' : 'Received order item(s)?'}
                       </label>
-                      <Button className="bg-green text-white rounded-full" onClick={switchStatus}>
+                      <Button
+                        className="bg-green text-white rounded-full"
+                        onClick={() => setConfirmModal(true)}
+                      >
                         Confirm
                       </Button>
                     </div>
