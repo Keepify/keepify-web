@@ -331,7 +331,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                 </div> */}
               </div>
             </section>
-            {userInfo.role === '1' && currentTransactions?.length ? (
+            {currentTransactions?.length ? (
               <section className="pb-20">
                 <div className="flex justify-between items-center pb-5">
                   <h2 className="text-orange lg:text-2xl text-xl  tracking-widest">
@@ -468,11 +468,11 @@ Profile.getInitialProps = async (ctx: PageContext) => {
     }
 
     const transactions = await getTransactions({ past: 'true' });
+    const currentTransactions = await getTransactions();
 
     // if the user is a host, get dropzones
     if (userInfo.role === '1') {
       const dropzones = await getHostDropzones(userInfo.id);
-      const currentTransactions = await getTransactions();
 
       return {
         transactions,
@@ -483,6 +483,7 @@ Profile.getInitialProps = async (ctx: PageContext) => {
 
     return {
       transactions,
+      currentTransactions,
     };
   } catch (e) {
     console.log(e);
