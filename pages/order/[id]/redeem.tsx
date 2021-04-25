@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { NextPage } from 'next';
 import { verifyQRToken } from 'services/transactions';
 import Head from 'next/head';
+import nextCookie from 'next-cookies';
+import setAuthToken from 'helpers/token';
 
 const RedeemPage: NextPage<Props> = ({ success }) => {
   return (
@@ -56,13 +58,22 @@ type Props = {
 
 RedeemPage.getInitialProps = async (ctx: PageContext) => {
   try {
+    const cookies = nextCookie(ctx);
+    if (cookies['_ap.ut']) {
+      // set JWT token to axios header
+      setAuthToken(cookies['_ap.ut']);
+    }
+
     const { token } = ctx.query;
     if (!token) throw new Error('Token not found');
 
     const { isLogin } = ctx.store.getState().user;
 
     if (!isLogin) {
-      redirect(ctx.res, `/login?r=${encodeURIComponent('/order/redeem?token=' + token)}`);
+      redirect(
+        ctx.res,
+        `/login?r=${encodeURIComponent(`/order/${ctx.query.id}/redeem?token=` + token)}`
+      );
     }
 
     try {

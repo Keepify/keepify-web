@@ -12,7 +12,7 @@ export async function loginUser(email: string, password: string) {
     });
 
     // set JWT token to axios header
-    setAuthToken(`Bearer ${data.token}`);
+    setAuthToken(data.token);
 
     cookie.set('_ap.ut', data.token, { expires: 365 });
 
