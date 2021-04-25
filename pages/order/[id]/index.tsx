@@ -193,7 +193,7 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                     <p className="tracking-wider text-sm">{transaction.client_note}</p>
                   </>
                 )}
-                {status === TStatus.RECEIVED && (
+                {!isClient && status === TStatus.RECEIVED && (
                   <>
                     <div className="my-4">
                       <label className="tracking-wider text-lg">Client Redeem Code</label>
