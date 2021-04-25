@@ -198,21 +198,23 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                     <div className="my-4">
                       <label className="tracking-wider text-lg">Client Redeem Code</label>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex lg:flex-row flex-col justify-between items-center">
                       <div>
                         <QRCode
                           size={200}
                           value={`https://keepify.vercel.app/order/${query.id}/redeem?token=${transaction.host_token}`}
                         />
                       </div>
-                      <div className="flex flex-col items-center ml-8">
-                        <Image
-                          src="/order/scan_redeem.svg"
-                          width={250}
-                          height={180}
-                          alt="scan_qr"
-                        />
-                        <p className="text-dark tracking-widest text-center mt-3">
+                      <div className="flex flex-col items-center lg:ml-8 ml-0">
+                        <span className="lg:inline hidden">
+                          <Image
+                            src="/order/scan_redeem.svg"
+                            width={250}
+                            height={180}
+                            alt="scan_qr"
+                          />
+                        </span>
+                        <p className="text-dark tracking-widest lg:text-center text-left mt-3">
                           Please show this QR code to the client when redeeming back the kept
                           item(s) in order to close the order!
                         </p>
