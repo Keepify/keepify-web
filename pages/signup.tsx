@@ -27,6 +27,7 @@ type Inputs = {
 
 const Signup: NextPage = () => {
   const Router = useRouter();
+  const { r } = Router.query;
   const { register, handleSubmit, errors } = useForm<Inputs>();
   const dispatch = useDispatch();
 
@@ -43,7 +44,9 @@ const Signup: NextPage = () => {
       dispatch(setUserInfo(user));
 
       setIsLoading(false);
-      Router.push('/');
+
+      // if any redirection link exist, redirect to the specified page instead
+      Router.push(r ? decodeURIComponent(r as string) : '/profile');
     } catch (e) {
       if (e?.response?.data?.message) {
         errorNotification('Error', e.response.data.message);
@@ -72,7 +75,7 @@ const Signup: NextPage = () => {
         </h1>
         <span className="text-grey text-sm">
           Already have an account?{' '}
-          <Link href="/login">
+          <Link href={`/login${r ? '?r=' + decodeURIComponent(r as string) : ''}`}>
             <a>
               <u>Login here</u>
             </a>

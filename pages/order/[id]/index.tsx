@@ -280,7 +280,7 @@ const OrderDetails: NextPage<Props> = ({ transaction }) => {
                 </div>
               )}
               {status === TStatus.REDEEMED && isReviewed && (
-                <div className="bg-full-white rounded-md py-6 px-10 mt-5">
+                <div className="bg-full-white rounded-md lg:py-6 py-5 lg:px-10 px-5 mt-5">
                   <label className="tracking-wider text-lg block mb-4">Review</label>
                   <div className="flex justify-between items-start mb-4">
                     <label className="tracking-widest text-sm">{clientReview}</label>

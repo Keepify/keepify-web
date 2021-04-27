@@ -25,6 +25,7 @@ type Inputs = {
 
 const Login: NextPage = () => {
   const Router = useRouter();
+  const { r } = Router.query;
   const { register, handleSubmit, errors } = useForm<Inputs>();
   const dispatch = useDispatch();
 
@@ -41,8 +42,6 @@ const Login: NextPage = () => {
       dispatch(setUserInfo(user));
 
       setIsLoading(false);
-
-      const { r } = Router.query;
 
       // if any redirection link exist, redirect to the specified page instead
       Router.push(r ? decodeURIComponent(r as string) : '/profile');
@@ -75,7 +74,7 @@ const Login: NextPage = () => {
         </h1>
         <span className="text-grey text-sm">
           Don’t have an account yet?{' '}
-          <Link href="/signup">
+          <Link href={`/signup${r ? '?r=' + decodeURIComponent(r as string) : ''}`}>
             <a>
               <u>Sign up here</u>
             </a>
@@ -124,13 +123,13 @@ const Login: NextPage = () => {
             />
           </div>
 
-          <div className="text-right pb-12">
+          {/* <div className="text-right pb-12">
             <Link href="/forgot-password">
               <a className="text-sm text-white">Forgot Password</a>
             </Link>
-          </div>
+          </div> */}
 
-          <div>
+          <div className="pt-6">
             <Button type="submit" className="w-full" onClick={handleSubmit(onSubmit)}>
               Sign In
             </Button>

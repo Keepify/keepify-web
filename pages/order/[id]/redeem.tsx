@@ -7,8 +7,11 @@ import { verifyQRToken } from 'services/transactions';
 import Head from 'next/head';
 import nextCookie from 'next-cookies';
 import setAuthToken from 'helpers/token';
+import { useRouter } from 'next/router';
 
 const RedeemPage: NextPage<Props> = ({ success }) => {
+  const { query } = useRouter();
+
   return (
     <article className="w-full min-h-screen bg-purple">
       <Head>
@@ -32,6 +35,14 @@ const RedeemPage: NextPage<Props> = ({ success }) => {
             <p className="mt-4 text-dark tracking-wider text-center">
               The item has been successfully redeemed. Thank you for using Keepify!
             </p>
+            <a
+              className="mt-4 text-orange font-bold"
+              href={`/order/${query.id}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Leave a review for your journey!
+            </a>
           </div>
         ) : (
           <div className="py-6 px-10 bg-full-white rounded-lg flex flex-col items-center">

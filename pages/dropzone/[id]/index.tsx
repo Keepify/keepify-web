@@ -141,7 +141,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
             </a>
           </Link>
           <ul className="lg:flex flex-row hidden">
-            {userInfo.role !== '1' && (
+            {userInfo?.role !== '1' && (
               <li>
                 <Link href="/about">
                   <a
@@ -220,7 +220,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
           </div>
         </div>
         <div className="lg:w-2/6 w-full">
-          {details.host.id === userInfo.id ? (
+          {details.host.id === userInfo?.id ? (
             <div className="shadow-2xl rounded-lg p-8 lg:mb-0 mb-10">
               <div className="flex justify-between items-center">
                 <p className="text-lg font-bold">Dropzone Status</p>
