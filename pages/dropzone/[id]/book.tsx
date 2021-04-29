@@ -107,22 +107,29 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
         end_date: moment(orderInfo.endTime).format('YYYY-MM-DD HH:mm:ss'),
       });
 
-      await stripe.confirmCardPayment(result.client_secret, {
+      const paymentResult = await stripe.confirmCardPayment(result.client_secret, {
         payment_method: {
           card: cardElement,
         },
       });
+
+      if (paymentResult.error) {
+        throw paymentResult.error.message;
+      }
 
       setIsPaymentComplete(true);
       setTransactionID(result.transaction_id);
 
       setIsLoading(false);
     } catch (e) {
-      console.log(e);
-      errorNotification(
-        'Error',
-        'An error occurred while processing your payment. Please contact us.'
-      );
+      if (typeof e === 'string') {
+        errorNotification('Error', e);
+      } else {
+        errorNotification(
+          'Error',
+          'An error occurred while processing with your order. Please try again.'
+        );
+      }
       setIsLoading(false);
     }
   }
