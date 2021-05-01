@@ -121,7 +121,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
             <a className="text-white text-xl tracking-wider">Dropzones</a>
           </Link>
         </li>
-        {userInfo.role === '1' && (
+        {userInfo.role !== '1' && (
           <li className="pb-4">
             <a
               className="text-white text-xl tracking-wider"
@@ -230,7 +230,7 @@ const Profile: NextPage<Props> = ({ transactions, dropzones, currentTransactions
                 </Link>
               </li>
               <li>
-                {userInfo.role === '1' && (
+                {userInfo.role !== '1' && (
                   <a
                     className="text-white text-xl tracking-wider pl-8 hover:text-orange-light transition"
                     href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"

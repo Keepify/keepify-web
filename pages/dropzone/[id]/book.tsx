@@ -10,7 +10,7 @@ import { DropzoneListItem } from 'types/dropzone';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { clearOrder, setEndTime, setItems, setStartTime } from 'actions/order';
-import { useOrderInfo } from 'hooks/redux';
+import { useOrderInfo, useUserInfo } from 'hooks/redux';
 import moment from 'moment';
 import {
   useStripe,
@@ -56,6 +56,7 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
   const orderInfo = useOrderInfo();
   const stripe = useStripe();
   const elements = useElements();
+  const { userInfo } = useUserInfo();
   const [isLoading, setIsLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCardNumberComplete, setisCardNumberComplete] = useState(false);
@@ -160,18 +161,20 @@ const BookDropzone: NextPage<Props> = ({ details }) => {
             </a>
           </Link>
           <ul className="lg:flex flex-row hidden">
-            <li>
-              <Link href="/about">
-                <a
-                  className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
-                  href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Become a Host
-                </a>
-              </Link>
-            </li>
+            {userInfo?.role !== '1' && (
+              <li>
+                <Link href="/about">
+                  <a
+                    className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition"
+                    href="https://k1mkuyv4azb.typeform.com/to/SLNsiRUn"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Become a Host
+                  </a>
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/profile">
                 <a className="text-white text-md tracking-wider pl-8 hover:text-orange-light transition">
