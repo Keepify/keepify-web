@@ -172,6 +172,7 @@ export default function Dropzones() {
               onChange={(e) => {
                 debouncedSearch.callback(e.target.value);
               }}
+              inputMode="search"
             />
           </div>
           <h2 className="text-black font-bold text-2xl pb-4">Nearby Storages</h2>
