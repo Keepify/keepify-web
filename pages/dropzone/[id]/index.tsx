@@ -26,7 +26,6 @@ import Loader from 'components/Loader';
 import Head from 'next/head';
 
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
-  console.log({ details });
   const Router = useRouter();
   const { query } = Router;
   const { isLogin, userInfo } = useUserInfo();

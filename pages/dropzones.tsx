@@ -15,10 +15,12 @@ import Pin from 'public/dropzone/pin';
 import { useUserInfo } from 'hooks/redux';
 import Image from 'next/image';
 import Head from 'next/head';
+import useWindowSize from 'hooks/useWindowSize';
 
 export default function Dropzones() {
   const { query } = useRouter();
   const { isLogin, userInfo } = useUserInfo();
+  const { innerWidth } = useWindowSize();
   const [currentLocation, setCurrentLocation] = useState<LatLng>({
     latitude: query.lat ? Number(query.lat) : 0,
     longitude: query.lng ? Number(query.lng) : 0,
@@ -104,7 +106,7 @@ export default function Dropzones() {
 
       if (list?.features?.length) {
         setIsLoading(true);
-        await fetchDropzones();
+        await debouncedFetchDropzones.callback();
         // move to the center of the first result
         setViewPort((prev) => ({
           ...prev,
@@ -212,29 +214,32 @@ export default function Dropzones() {
           </div>
         </div>
         <div className="w-2/5 mr-auto lg:block hidden">
-          <ReactMapGL
-            {...viewPort}
-            width="100%"
-            height="100%"
-            onViewportChange={(viewport) => {
-              setViewPort(viewport);
-              debouncedFetchDropzones.callback();
-            }}
-            mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
-            mapStyle="mapbox://styles/mapbox/streets-v11"
-          >
-            {dropzoneList.map((dropzone, i) => (
-              <Marker
-                key={i}
-                latitude={dropzone.location.lat}
-                longitude={dropzone.location.lng}
-                offsetTop={-48}
-                offsetLeft={-24}
-              >
-                <Pin />
-              </Marker>
-            ))}
-          </ReactMapGL>
+          {innerWidth > 1024 && (
+            <ReactMapGL
+              {...viewPort}
+              width="100%"
+              height="100%"
+              onViewportChange={(viewport) => {
+                setViewPort(viewport);
+                console.log('debounced');
+                debouncedFetchDropzones.callback();
+              }}
+              mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
+              mapStyle="mapbox://styles/mapbox/streets-v11"
+            >
+              {dropzoneList.map((dropzone, i) => (
+                <Marker
+                  key={i}
+                  latitude={dropzone.location.lat}
+                  longitude={dropzone.location.lng}
+                  offsetTop={-48}
+                  offsetLeft={-24}
+                >
+                  <Pin />
+                </Marker>
+              ))}
+            </ReactMapGL>
+          )}
         </div>
       </div>
     </div>
