@@ -25,6 +25,8 @@ import { errorNotification } from 'helpers/notification';
 import Loader from 'components/Loader';
 import Head from 'next/head';
 
+const now = new Date();
+
 const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
   const Router = useRouter();
   const { query } = Router;
@@ -251,7 +253,7 @@ const DropzoneDetails: NextPage<Props> = ({ details, location }) => {
                     format="LL"
                     dayPickerProps={{
                       selectedDays: [from, { from, to }],
-                      disabledDays: { after: to },
+                      disabledDays: { before: now, after: to },
                       toMonth: to,
                       modifiers: { start: from, end: to },
                       numberOfMonths: 2,
